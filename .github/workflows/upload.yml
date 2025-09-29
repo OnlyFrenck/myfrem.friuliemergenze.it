@@ -1,7 +1,6 @@
-name: Upload File Endpoint
+name: Upload File
 
 on:
-  workflow_dispatch:
   repository_dispatch:
     types: [upload-file]
 
@@ -12,21 +11,24 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Upload file
+      - name: Get payload
         run: |
-          echo "$FILE_CONTENT" | base64 --decode > "$FILE_PATH"
+          echo "NAME=${{ github.event.client_payload.name }}" >> $GITHUB_ENV
+          echo "PATH=${{ github.event.client_payload.path }}" >> $GITHUB_ENV
+          echo "CONTENT=${{ github.event.client_payload.content }}" >> $GITHUB_ENV
+
+      - name: Create directories
+        run: mkdir -p "$(dirname $PATH)"
+
+      - name: Save file
+        run: echo $CONTENT | base64 --decode > $PATH
+
+      - name: Commit & push
+        run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add "$FILE_PATH"
-          git commit -m "Upload $FILE_NAME"
-          git push origin main
+          git add $PATH
+          git commit -m "Upload $NAME via workflow"
+          git push
         env:
-          FILE_NAME: ${{ github.event.client_payload.name }}
-          FILE_PATH: ${{ github.event.client_payload.path }}
-          FILE_CONTENT: ${{ github.event.client_payload.content }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
