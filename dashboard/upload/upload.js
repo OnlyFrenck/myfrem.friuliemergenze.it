@@ -1,3 +1,5 @@
+// upload.js
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
@@ -23,17 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const uploadBtn = document.getElementById("btn-upl");
   const statusMsg = document.getElementById("statusMsg");
 
-  // 🔑 GitHub info
-  const GITHUB_USER = "OnlyFrenck";
-  const GITHUB_REPO = "Storage-MyFrEM";
-  const GITHUB_BRANCH = "main";
-  const GITHUB_TOKEN = "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";
-
-  // 📌 Utility per aggiornare lo status
-  function setStatus(message, type = "info") {
+  function setStatus(message, type="info") {
     if (!statusMsg) return;
     statusMsg.textContent = message;
-    statusMsg.className = type; // CSS: .info .success .error
+    statusMsg.className = type;
   }
 
   // 🚀 Upload
@@ -61,27 +56,26 @@ document.addEventListener("DOMContentLoaded", () => {
           const base64 = reader.result.split(",")[1];
           const path = `uploads/${user.uid}/${Date.now()}-${file.name}`;
 
-          // 📤 Upload GitHub
-          const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`, {
-            method: "PUT",
+          // 🔗 POST a GitHub Actions workflow
+          const res = await fetch(`https://api.github.com/repos/OnlyFrenck/Storage-MyFrEM/dispatches`, {
+            method: "POST",
             headers: {
-              "Authorization": `token ${GITHUB_TOKEN}`,
-              "Content-Type": "application/json"
+              "Accept": "application/vnd.github.v3+json",
+              // Nessun token esposto, workflow userà secret GH_TOKEN
             },
             body: JSON.stringify({
-              message: `Upload ${file.name}`,
-              content: base64,
-              branch: GITHUB_BRANCH
+              event_type: "upload-file",
+              client_payload: {
+                name: file.name,
+                path: path,
+                content: base64
+              }
             })
           });
 
-          const data = await res.json();
+          if (!res.ok) throw new Error("Errore GitHub workflow");
 
-          if (!res.ok || !data.content) {
-            throw new Error(data.message || "Errore upload GitHub");
-          }
-
-          const fileUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${path}`;
+          const fileUrl = `https://raw.githubusercontent.com/OnlyFrenck/Storage-MyFrEM/main/${path}`;
 
           // 🗄️ Salvataggio Firestore
           await addDoc(collection(db, "photos"), {
@@ -93,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
           });
 
           setStatus("✅ Foto caricata con successo!", "success");
-          fileInput.value = ""; // reset input
+          fileInput.value = "";
         } catch (innerErr) {
           console.error("❌ Errore interno:", innerErr);
           setStatus("❌ Errore durante l'upload", "error");
@@ -101,19 +95,16 @@ document.addEventListener("DOMContentLoaded", () => {
       };
 
       reader.readAsDataURL(file);
-
     } catch (err) {
       console.error("❌ Errore principale:", err);
       setStatus("❌ Errore durante il caricamento", "error");
     }
   });
 
-});
+  // Logout
+  document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+    await auth.signOut();
+    window.location.href = "/login/";
+  });
 
-// Logout
-document.getElementById("logoutBtn").addEventListener("click", async () => {
-  console.log("🚪 Logout in corso...");
-  await auth.signOut();
-  console.log("✅ Logout completato, redirect...");
-  window.location.href = "/login/";
 });
