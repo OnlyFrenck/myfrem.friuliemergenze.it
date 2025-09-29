@@ -1,0 +1,163 @@
+/* Reset e base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #222;
+  color: #fff;
+  height: 100vh; /* copre tutto lo spazio verticale */
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.sidebar .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.sidebar .logo img {
+  width: 40px;
+  height: 40px;
+}
+
+.sidebar nav a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 0;
+  margin-bottom: 5px;
+  border-radius: 4px;
+}
+
+.sidebar nav a.active,
+.sidebar nav a:hover {
+  background-color: #444;
+}
+
+.sidebar .logout {
+  margin-top: auto;
+  padding: 10px;
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  padding: 30px;
+}
+
+.main-content h1 {
+  margin-bottom: 20px;
+}
+
+.settings-section {
+  background-color: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.settings-section h2 {
+  margin-bottom: 15px;
+}
+
+.settings-section label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.settings-section input[type="text"],
+.settings-section input[type="password"],
+.settings-section input[type="email"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.settings-section button {
+  padding: 10px 15px;
+  border: none;
+  background-color: #2ecc71;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.settings-section button:hover {
+  background-color: #27ae60;
+}
+
+#statusMsg {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+#statusMsg.info { color: #3498db; }
+#statusMsg.success { color: #2ecc71; }
+#statusMsg.error { color: #e74c3c; }
+
+:root {
+  --bg-color: #f5f5f5;
+  --text-color: #222;
+  --sidebar-bg: #222;
+  --sidebar-text: #fff;
+  --button-bg: #2ecc71;
+  --button-hover: #27ae60;
+}
+
+body.light-mode {
+  --bg-color: #f5f5f5;
+  --text-color: #222;
+  --sidebar-bg: #222;
+  --sidebar-text: #fff;
+  --button-bg: #2ecc71;
+  --button-hover: #27ae60;
+}
+
+body.dark-mode {
+  --bg-color: #121212;
+  --text-color: #eee;
+  --sidebar-bg: #1e1e1e;
+  --sidebar-text: #fff;
+  --button-bg: #27ae60;
+  --button-hover: #2ecc71;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.sidebar {
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text);
+}
+
+.settings-section button {
+  background-color: var(--button-bg);
+}
+
+.settings-section button:hover {
+  background-color: var(--button-hover);
+}

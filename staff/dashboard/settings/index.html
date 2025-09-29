@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impostazioni Staff | Dashboard Staff - La migliore piattaforma in Friuli-Venezia Giulia nel caricamento foto inerenti l'emergenza</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="https://friuliemergenze.it/assets/logo.png" type="image/x-icon">
+  <script type="module" src="staff-settings.js"></script>
+  <script type="module" src="mail-stg.js"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="https://friuliemergenze.it/assets/logo.png" alt="MyFrEM Logo">
+      <h2>MyFrEM Staff</h2>
+    </div>
+    <nav>
+      <a href="/staff">📊 Dashboard</a>
+      <a href="/staff/dashboard/photos/">🖼️ Moderazione foto</a>
+      <a href="/staff/dashboard/users/">👥 Gestione utenti</a>
+      <a href="/staff/dashboard/settings/" class="active">⚙️ Impostazioni</a>
+    </nav>
+    <button id="logoutBtn" class="logout">🚪 Logout</button>
+  </aside>
+
+  <div class="main-content">
+    <h1>⚙️ Impostazioni Staff</h1>
+
+    <div class="settings-section">
+      <h2>Cambia Password</h2>
+      <form id="changePasswordForm">
+        <label for="currentPassword">Password attuale</label>
+        <input type="password" id="currentPassword" required>
+
+        <label for="newPassword">Nuova password</label>
+        <input type="password" id="newPassword" required>
+
+        <label for="confirmPassword">Conferma nuova password</label>
+        <input type="password" id="confirmPassword" required>
+
+        <button type="submit">💾 Cambia password</button>
+      </form>
+      <p id="passwordStatusMsg"></p>
+    </div>
+
+    <div class="settings-section">
+      <h2>Preferenze Staff</h2>
+      <form id="preferencesForm">
+        <label>
+          <input type="checkbox" id="emailNotifications">
+          Ricevi notifiche via email
+        </label>
+        <button type="submit">💾 Salva preferenze</button>
+        </form>
+        <p id="preferencesStatusMsg"></p>
+    </div>
+  </div>
+</body>
+</html>

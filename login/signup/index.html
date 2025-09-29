@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registrazione alla piattaforma MyFrEM</title>
+  <link rel="stylesheet" href="/login/style.css" />
+  <link rel="shortcut icon" href="https://friuliemergenze.it/assets/logo.png" type="image/x-icon">
+  <!-- Firebase SDK (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Registrazione</h1>
+
+    <form id="registerForm">
+      <h5>Nome *</h5>
+      <input type="text" id="registerName" required />
+
+      <h5>Cognome *</h5>
+      <input type="text" id="registerSurname" required />
+
+      <h5>Username *</h5>
+      <input type="text" id="registerUsername" required />
+
+      <h5>Email *</h5>
+      <input type="email" id="registerEmail" required />
+
+      <h5>Password *</h5>
+      <div class="password-field">
+        <input type="password" id="registerPassword" required />
+        <span class="toggle-password" onclick="togglePassword('registerPassword', this)">👁</span>
+      </div>
+
+      <h5>Conferma Password *</h5>
+      <div class="password-field">
+        <input type="password" id="registerConfirmPassword" required />
+        <span class="toggle-password" onclick="togglePassword('registerConfirmPassword', this)">👁</span>
+      </div>
+
+      <button type="submit">Crea account</button>
+    </form>
+
+    <p class="note">Tutti i campi con * sono obbligatori</p>
+
+    <p class="ac-login">Hai già un account? <a href="/login/signin">Accedi qui</a></p>
+    <p id="error" class="error"></p>
+  </div>
+
+  <script src="/login/app.js"></script>
+</body>
+</html>

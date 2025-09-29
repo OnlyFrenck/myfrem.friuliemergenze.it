@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profilo Utente | Piattaforma MyFrEM di FriuliEmergenze</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="https://friuliemergenze.it/assets/logo.png" type="image/x-icon">
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="https://friuliemergenze.it/assets/logo.png" alt="MyFrEM Logo">
+        <h2>MyFrEM</h2>
+      </div>
+      <nav>
+        <a href="/dashboard">🏠 Home</a>
+        <a href="/dashboard/profile" class="active">👤 Profilo</a>
+        <a href="/dashboard/upload">📸 Carica una foto</a>
+        <a href="/dashboard/all-photos">📸 Le mie foto</a>
+      </nav>
+      <button id="logoutBtn" class="logout">🚪 Logout</button>
+    </aside>
+
+    <div class="main-content">
+      <h1>Profilo Utente</h1>
+
+      <form id="profileForm">
+        <label>Nome</label>
+        <input type="text" id="name" required>
+
+        <label>Cognome</label>
+        <input type="text" id="surname" required>
+
+        <label>Username</label>
+        <input type="text" id="username" required>
+
+        <label>Email</label>
+        <input type="email" id="email" disabled>
+
+        <p id="msgEmail" style="font-size: 15px;">Per modificare la tua mail. Contatta il supporto a <a href="mailto:cambiomail.myfrem@friuliemergenze.it">cambiomail.myfrem@friuliemergenze.it</a></p>
+
+        <button type="submit">💾 Salva modifiche</button>
+      </form>
+
+      <p id="statusMsg"></p>
+    </div>
+
+    <script src="profile.js"></script>
+</body>
+</html>
