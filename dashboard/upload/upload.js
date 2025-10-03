@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { config } from 'https://cdn.jsdelivr.net/npm/dotenv@16.0.3/+esm';
+import { config } from 'https://cdn.jsdelivr.net/npm/dotenv@16.0.3/lib/main.js';
 config();
 
 document.addEventListener("DOMContentLoaded", () => {
