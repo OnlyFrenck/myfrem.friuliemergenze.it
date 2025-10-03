@@ -3,15 +3,16 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-aut
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 🔥 Config Firebase
+  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyDWjMMe_yOtuVheeCPOwKiG8_-l35qdyKY",
     authDomain: "myfrem-friuliemergenze.firebaseapp.com",
     projectId: "myfrem-friuliemergenze",
-    storageBucket: "myfrem-friuliemergenze.firebasestorage.app",
+    storageBucket: "myfrem-friuliemergenze.appspot.com",
     messagingSenderId: "604175974671",
     appId: "1:604175974671:web:cb02a60611513eaf377e7a"
   };
+
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
@@ -24,17 +25,23 @@ document.addEventListener("DOMContentLoaded", () => {
   function setStatus(message, type = "info") {
     if (!statusMsg) return;
     statusMsg.textContent = message;
-    statusMsg.className = type; // CSS: .info .success .error
+    statusMsg.className = type;
   }
 
   uploadBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
     const user = auth.currentUser;
-    if (!user) return setStatus("⚠️ Devi fare login!", "error");
+    if (!user) {
+      setStatus("⚠️ Devi fare login prima di caricare!", "error");
+      return;
+    }
 
     const file = fileInput?.files?.[0];
-    if (!file) return setStatus("⚠️ Seleziona una foto prima di salvare!", "error");
+    if (!file) {
+      setStatus("⚠️ Seleziona una foto prima di salvare!", "error");
+      return;
+    }
 
     setStatus("⏳ Caricamento in corso...");
 
@@ -44,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const base64 = reader.result.split(",")[1];
         const path = `uploads/${user.uid}/${Date.now()}-${file.name}`;
 
-        // 🔗 Chiamata alla Netlify Function
+        // 🔹 Chiamata alla Netlify Function (niente token sul client!)
         const res = await fetch("/.netlify/functions/upload", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -52,26 +59,28 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Errore workflow");
 
-        const fileUrl = `https://raw.githubusercontent.com/OnlyFrenck/Storage-MyFrEM/main/${path}`;
+        if (!res.ok) {
+          throw new Error(data.error || "Errore Netlify Function");
+        }
 
-        // Salva Firestore
+        // Salvo su Firestore con lo status "pending"
         await addDoc(collection(db, "photos"), {
           status: "pending",
           userId: user.uid,
           name: file.name,
-          url: fileUrl,
+          url: data.url, // ricevuto dal server
           createdAt: serverTimestamp()
         });
 
-        setStatus("✅ Foto caricata con successo!", "success");
+        setStatus("✅ Foto inviata al workflow!", "success");
         fileInput.value = "";
       } catch (err) {
-        console.error("❌ Errore upload:", err);
-        setStatus("❌ Errore durante l'upload", "error");
+        console.error("❌ Errore:", err);
+        setStatus("❌ Errore upload: " + err.message, "error");
       }
     };
+
     reader.readAsDataURL(file);
   });
 });
