@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-export async function handler(event) {
+export async function handler(event, context) {
   try {
     const { path, content } = JSON.parse(event.body);
 
@@ -14,13 +14,13 @@ export async function handler(event) {
     const GITHUB_USER = "OnlyFrenck";
     const GITHUB_REPO = "Storage-MyFrEM";
     const GITHUB_BRANCH = "main";
-    const GITHUB_TOKEN = process.env.GH_TOKEN; // impostalo in Netlify ENV
+    const GITHUB_TOKEN = process.env.GH_TOKEN; // definito su Netlify
 
     const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/dispatches`, {
       method: "POST",
       headers: {
         "Accept": "application/vnd.github+json",
-        "Authorization": `Bearer ${GITHUB_TOKEN}`,
+        "Authorization": `token ${GITHUB_TOKEN}`,
       },
       body: JSON.stringify({
         event_type: "upload-file",
@@ -35,7 +35,10 @@ export async function handler(event) {
 
     const fileUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${path}`;
 
-    return { statusCode: 200, body: JSON.stringify({ message: "Upload inviato al workflow", url: fileUrl }) };
+    return { 
+      statusCode: 200, 
+      body: JSON.stringify({ message: "Upload inviato al workflow", url: fileUrl }) 
+    };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
