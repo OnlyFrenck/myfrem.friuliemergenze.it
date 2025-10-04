@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const base64 = reader.result.split(",")[1];
         const path = `uploads/${user.uid}/${Date.now()}-${file.name}`;
 
-        const res = await fetch("/netlify/functions/upload", {
+        const res = await fetch("/.netlify/functions/upload", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ path, content: base64 })
