@@ -66,7 +66,7 @@ uploadBtn.addEventListener("click", (e) => {
     const path = `uploads/${currentUser.uid}/${Date.now()}-${file.name}`;
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/upload.js");
+    xhr.open("POST", "/api/upload");
 
     xhr.setRequestHeader("Content-Type", "application/json");
 
