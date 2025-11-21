@@ -1,3 +1,5 @@
+import Busboy from "busboy";
+
 export const config = {
   api: {
     bodyParser: false
@@ -14,19 +16,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    const busboy = (await import("busboy")).default;
-    const bb = busboy({ headers: req.headers });
+    const bb = Busboy({ headers: req.headers });
 
     let fileBuffer = null;
     let path = null;
-    let filename = null;
 
     bb.on("field", (name, value) => {
       if (name === "path") path = value;
     });
 
-    bb.on("file", (name, file, info) => {
-      filename = info.filename;
+    bb.on("file", (name, file) => {
       const chunks = [];
 
       file.on("data", d => chunks.push(d));
@@ -37,13 +36,14 @@ export default async function handler(req, res) {
 
     bb.on("close", async () => {
       if (!fileBuffer || !path) {
-        return res.status(400).json({ error: "File mancante" });
+        return res.status(400).json({ error: "File o path mancante" });
       }
 
-      const r = await fetch("https://blob.vercel-storage.com", {
-        method: "POST",
+      const r = await fetch(`https://blob.vercel-storage.com/${path}`, {
+        method: "PUT",
         headers: {
-          Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`
+          Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`,
+          "Content-Type": "application/octet-stream"
         },
         body: fileBuffer
       });
@@ -53,7 +53,6 @@ export default async function handler(req, res) {
     });
 
     req.pipe(bb);
-
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }

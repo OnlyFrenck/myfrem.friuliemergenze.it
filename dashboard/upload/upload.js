@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/fireba
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
+// ─── Firebase Config ─────────────────────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyDWjMMe_yOtuVheeCPOwKiG8_-l35qdyKY",
   authDomain: "myfrem-friuliemergenze.firebaseapp.com",
@@ -15,29 +16,41 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// ─── Elementi DOM ─────────────────────────────────────────────────────────────
 const fileInput = document.getElementById("inp-upl");
 const uploadBtn = document.getElementById("btn-upl");
 const statusMsg = document.getElementById("statusMsg");
-const progressBar = document.getElementById("progressBar");
-const progressText = document.getElementById("progressText");
 const fileNameSpan = document.getElementById("file-name");
+
+// Se non li hai nel HTML, non esplode
+const progressBar = document.getElementById("progressBar") || { style:{}, value:0 };
+const progressText = document.getElementById("progressText") || { textContent:"" };
 
 let currentUser = null;
 
+// ─── Stato Login ──────────────────────────────────────────────────────────────
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
+  if (!user) {
+    setStatus("⚠️ Devi essere loggato per caricare");
+  }
 });
 
+// ─── Mostra nome file ─────────────────────────────────────────────────────────
 fileInput.addEventListener("change", () => {
-  fileNameSpan.textContent = fileInput.files.length
-    ? `✅ ${fileInput.files[0].name}`
-    : "Nessun file";
+  if (fileInput.files.length > 0) {
+    fileNameSpan.textContent = `✅ ${fileInput.files[0].name}`;
+  } else {
+    fileNameSpan.textContent = "Nessun file";
+  }
 });
 
+// ─── Status helper ────────────────────────────────────────────────────────────
 function setStatus(msg) {
-  if (statusMsg) statusMsg.textContent = msg;
+  statusMsg.textContent = msg;
 }
 
+// ─── Upload ───────────────────────────────────────────────────────────────────
 uploadBtn.addEventListener("click", (e) => {
   e.preventDefault();
 
@@ -52,59 +65,58 @@ uploadBtn.addEventListener("click", (e) => {
     return;
   }
 
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
+  const path = `uploads/${currentUser.uid}/${Date.now()}-${file.name}`;
 
-  setStatus("⏳ Preparazione upload...");
-  if (progressBar) {
-    progressBar.style.display = "block";
-    progressBar.value = 0;
-  }
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("path", path);
 
-  reader.onload = () => {
-    const base64 = reader.result.split(",")[1];
-    const path = `uploads/${currentUser.uid}/${Date.now()}-${file.name}`;
+  setStatus("⏳ Upload in corso...");
 
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/upload");
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/api/upload");
 
-    xhr.setRequestHeader("Content-Type", "application/json");
-
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable && progressBar && progressText) {
-        const percent = Math.round((event.loaded / event.total) * 100);
-        progressBar.value = percent;
-        progressText.textContent = percent + "%";
-      }
-    };
-
-    xhr.onload = async () => {
-      try {
-        const data = JSON.parse(xhr.responseText);
-
-        if (!data.url) throw new Error(data.error || "Upload fallito");
-
-        await addDoc(collection(db, "photos"), {
-          userId: currentUser.uid,
-          name: file.name,
-          url: data.url,
-          createdAt: serverTimestamp()
-        });
-
-        setStatus("✅ Caricamento completato!");
-        if (progressText) progressText.textContent = "Completato ✅";
-        fileInput.value = "";
-
-      } catch (err) {
-        console.error(err);
-        setStatus("❌ Errore: " + err.message);
-      }
-    };
-
-    xhr.onerror = () => {
-      setStatus("❌ Errore di rete");
-    };
-
-    xhr.send(JSON.stringify({ path, content: base64 }));
+  // Progress (se esiste barra)
+  xhr.upload.onprogress = (event) => {
+    if (event.lengthComputable && progressBar.style) {
+      const percent = Math.round((event.loaded / event.total) * 100);
+      progressBar.value = percent;
+      progressText.textContent = percent + "%";
+    }
   };
+
+  // Risposta OK
+  xhr.onload = async () => {
+    try {
+      const data = JSON.parse(xhr.responseText);
+
+      if (!data.url) {
+        throw new Error(data.error || "Upload fallito");
+      }
+
+      // Salva in Firestore
+      await addDoc(collection(db, "photos"), {
+        userId: currentUser.uid,
+        name: file.name,
+        url: data.url,
+        createdAt: serverTimestamp()
+      });
+
+      setStatus("✅ Foto caricata correttamente!");
+      if (progressText) progressText.textContent = "Completato ✅";
+      fileInput.value = "";
+      fileNameSpan.textContent = "Nessun file";
+
+    } catch (err) {
+      console.error(err);
+      setStatus("❌ Errore: " + err.message);
+    }
+  };
+
+  // Errore rete
+  xhr.onerror = () => {
+    setStatus("❌ Errore di rete");
+  };
+
+  xhr.send(formData);
 });
