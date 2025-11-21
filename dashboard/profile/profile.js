@@ -1,11 +1,12 @@
 // Config Firebase (stesso che hai già in app.js)
 const firebaseConfig = {
-  apiKey: "AIzaSyDWjMMe_yOtuVheeCPOwKiG8_-l35qdyKY",
-  authDomain: "myfrem-friuliemergenze.firebaseapp.com",
-  projectId: "myfrem-friuliemergenze",
-  storageBucket: "myfrem-friuliemergenze.appspot.com",
-  messagingSenderId: "604175974671",
-  appId: "1:604175974671:web:cb02a60611513eaf377e7a"
+  apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
+  authDomain: "friuli-emergenze.firebaseapp.com",
+  projectId: "friuli-emergenze",
+  storageBucket: "friuli-emergenze.firebasestorage.app",
+  messagingSenderId: "362899702838",
+  appId: "1:362899702838:web:da96f62189ef1fa2010497",
+  measurementId: "G-THNJG888RE"
 };
 
 firebase.initializeApp(firebaseConfig);
