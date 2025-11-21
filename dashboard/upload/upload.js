@@ -16,6 +16,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+let currentUser = null;
+
 const fileInput = document.getElementById("inp-upl");
 const uploadBtn = document.getElementById("btn-upl");
 const statusMsg = document.getElementById("statusMsg");
@@ -25,23 +27,38 @@ function setStatus(msg, type="info") {
   statusMsg.className = type;
 }
 
+// ✅ aspetta che Firebase sappia se l'utente è loggato
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUser = user;
+    setStatus("✅ Utente riconosciuto", "success");
+  } else {
+    currentUser = null;
+    setStatus("⚠️ Non sei loggato", "error");
+  }
+});
+
+// ✅ upload corretto
 uploadBtn.addEventListener("click", (e) => {
   e.preventDefault();
 
-  const file = fileInput.files[0];
-  const user = auth.currentUser;
+  if (!currentUser) {
+    return setStatus("❌ Devi fare login", "error");
+  }
 
-  if (!user) return setStatus("❌ Devi fare login", "error");
-  if (!file) return setStatus("❌ Seleziona una foto", "error");
+  const file = fileInput.files[0];
+  if (!file) {
+    return setStatus("❌ Seleziona una foto", "error");
+  }
 
   const reader = new FileReader();
 
   reader.onload = async () => {
     try {
-      setStatus("⏳ Upload...");
+      setStatus("⏳ Upload in corso...");
 
-      const base64 = reader.result.split(',')[1];
-      const filename = `${user.uid}/${Date.now()}-${file.name}`;
+      const base64 = reader.result.split(",")[1];
+      const filename = `${currentUser.uid}/${Date.now()}-${file.name}`;
 
       const res = await fetch("/api/upload", {
         method: "POST",
@@ -56,20 +73,20 @@ uploadBtn.addEventListener("click", (e) => {
       const data = await res.json();
       if (!data.url) throw new Error("Upload fallito");
 
-      await addDoc(collection(db, "MyFrEM-photos"), {
+      await addDoc(collection(db, "photos"), {
         status: "pending",
-        userId: user.uid,
+        userId: currentUser.uid,
         name: file.name,
         url: data.url,
         createdAt: serverTimestamp()
       });
 
-      setStatus("✅ Foto caricata!", "success");
+      setStatus("✅ Foto caricata correttamente!", "success");
       fileInput.value = "";
 
     } catch (err) {
       console.error(err);
-      setStatus("❌ " + err.message, "error");
+      setStatus("❌ Errore: " + err.message, "error");
     }
   };
 
