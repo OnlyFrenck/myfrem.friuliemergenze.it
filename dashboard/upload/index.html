@@ -3,18 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Carica una Foto | MyFrEM FriuliEmergenze</title>
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
   <link rel="stylesheet" href="/dashboard/upload/style.css">
   <link rel="shortcut icon" href="https://friuliemergenze.it/assets/logo.png" type="image/x-icon">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js"></script>
 </head>
 <body>
-  <!-- SIDEBAR -->
+
   <aside class="sidebar">
     <div class="logo">
-      <img src="https://friuliemergenze.it/assets/logo.png" alt="MyFrEM Logo">
+      <img src="https://friuliemergenze.it/assets/logo.png">
       <h2>MyFrEM</h2>
     </div>
     <nav>
@@ -23,42 +25,28 @@
       <a href="/dashboard/upload" class="active">📸 Carica una foto</a>
       <a href="/dashboard/all-photos">📸 Le mie foto</a>
     </nav>
-    <button id="logoutBtn" class="logout">🚪 Logout</button>
   </aside>
 
-  <!-- CONTENUTO -->
   <div class="main-content">
     <h1>📸 Carica una Foto</h1>
 
     <form id="uploadForm">
-      <label for="title">Titolo della foto</label>
+      <label>Titolo</label>
       <input type="text" id="title" required>
 
-      <label for="description">Descrizione</label>
-      <textarea id="description" rows="4" required></textarea>
+      <label>Descrizione</label>
+      <textarea id="description" required></textarea>
 
-      <input type="file" id="inp-upl" />
-      <label for="inp-upl">📤 Scegli una foto</label>
-      <span id="file-name">Nessun file selezionato</span>
+      <input type="file" id="inp-upl" accept="image/*">
+      <label for="inp-upl">📤 Scegli foto</label>
+      <span id="file-name">Nessun file</span>
 
-      <script>
-        const inp = document.getElementById("inp-upl");
-        const fileName = document.getElementById("file-name");
-
-        inp.addEventListener("change", () => {
-          fileName.textContent = inp.files.length > 0
-            ? `✅ ${inp.files[0].name}`
-            : "Nessun file selezionato";
-        });
-      </script>
-
-      <button type="submit" id="btn-upl">📤 Carica</button>
+      <button id="btn-upl">📤 Carica</button>
     </form>
 
     <p id="statusMsg"></p>
   </div>
 
-  <!-- Script Upload -->
   <script type="module" src="/dashboard/upload/upload.js"></script>
 </body>
 </html>
