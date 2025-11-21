@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Carica una Foto | MyFrEM FriuliEmergenze</title>
-
   <link rel="stylesheet" href="/dashboard/upload/style.css">
   <link rel="shortcut icon" href="https://friuliemergenze.it/assets/logo.png" type="image/x-icon">
-  <script type="module" src="/dashboard/upload/upload.js"></script>
 </head>
 <body>
 
@@ -36,6 +34,9 @@
       <input type="file" id="inp-upl" accept="image/*">
       <label for="inp-upl">📤 Scegli foto</label>
       <span id="file-name">Nessun file</span>
+
+      <progress id="progressBar" value="0" max="100" style="width:100%;display:none;"></progress>
+      <p id="progressText"></p>
 
       <button id="btn-upl">📤 Carica</button>
     </form>

@@ -1,94 +1,108 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
-  authDomain: "friuli-emergenze.firebaseapp.com",
-  projectId: "friuli-emergenze",
-  storageBucket: "friuli-emergenze.firebasestorage.app",
-  messagingSenderId: "362899702838",
-  appId: "1:362899702838:web:da96f62189ef1fa2010497",
-  measurementId: "G-THNJG888RE"
+  apiKey: "AIzaSyDWjMMe_yOtuVheeCPOwKiG8_-l35qdyKY",
+  authDomain: "myfrem-friuliemergenze.firebaseapp.com",
+  projectId: "myfrem-friuliemergenze",
+  storageBucket: "myfrem-friuliemergenze.firebasestorage.app",
+  messagingSenderId: "604175974671",
+  appId: "1:604175974671:web:cb02a60611513eaf377e7a"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUser = null;
-
 const fileInput = document.getElementById("inp-upl");
 const uploadBtn = document.getElementById("btn-upl");
 const statusMsg = document.getElementById("statusMsg");
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+const fileNameSpan = document.getElementById("file-name");
 
-function setStatus(msg, type="info") {
-  statusMsg.textContent = msg;
-  statusMsg.className = type;
-}
+let currentUser = null;
 
-// ✅ aspetta che Firebase sappia se l'utente è loggato
 onAuthStateChanged(auth, (user) => {
-  if (user) {
-    currentUser = user;
-    setStatus("✅ Utente riconosciuto", "success");
+  currentUser = user;
+});
+
+fileInput.addEventListener("change", () => {
+  if (fileInput.files.length > 0) {
+    fileNameSpan.textContent = `✅ ${fileInput.files[0].name}`;
   } else {
-    currentUser = null;
-    setStatus("⚠️ Non sei loggato", "error");
+    fileNameSpan.textContent = "Nessun file";
   }
 });
 
-// ✅ upload corretto
+function setStatus(msg) {
+  statusMsg.textContent = msg;
+}
+
 uploadBtn.addEventListener("click", (e) => {
   e.preventDefault();
 
   if (!currentUser) {
-    return setStatus("❌ Devi fare login", "error");
+    setStatus("❌ Devi essere loggato");
+    return;
   }
 
   const file = fileInput.files[0];
   if (!file) {
-    return setStatus("❌ Seleziona una foto", "error");
+    setStatus("❌ Seleziona una foto");
+    return;
   }
 
   const reader = new FileReader();
-
-  reader.onload = async () => {
-    try {
-      setStatus("⏳ Upload in corso...");
-
-      const base64 = reader.result.split(",")[1];
-      const filename = `${currentUser.uid}/${Date.now()}-${file.name}`;
-
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          filename,
-          contentType: file.type,
-          fileBase64: base64
-        })
-      });
-
-      const data = await res.json();
-      if (!data.url) throw new Error("Upload fallito");
-
-      await addDoc(collection(db, "photos"), {
-        status: "pending",
-        userId: currentUser.uid,
-        name: file.name,
-        url: data.url,
-        createdAt: serverTimestamp()
-      });
-
-      setStatus("✅ Foto caricata correttamente!", "success");
-      fileInput.value = "";
-
-    } catch (err) {
-      console.error(err);
-      setStatus("❌ Errore: " + err.message, "error");
-    }
-  };
-
   reader.readAsDataURL(file);
+
+  setStatus("⏳ Preparazione upload...");
+  progressBar.style.display = "block";
+  progressBar.value = 0;
+
+  reader.onload = () => {
+    const base64 = reader.result.split(",")[1];
+    const path = `uploads/${currentUser.uid}/${Date.now()}-${file.name}`;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/upload.js");
+
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        progressBar.value = percent;
+        progressText.textContent = percent + "%";
+      }
+    };
+
+    xhr.onload = async () => {
+      try {
+        const data = JSON.parse(xhr.responseText);
+
+        if (!data.url) throw new Error("Upload fallito");
+
+        await addDoc(collection(db, "photos"), {
+          userId: currentUser.uid,
+          name: file.name,
+          url: data.url,
+          createdAt: serverTimestamp()
+        });
+
+        setStatus("✅ Caricamento completato!");
+        progressText.textContent = "Completato ✅";
+        fileInput.value = "";
+      } catch (err) {
+        setStatus("❌ Errore: " + err.message);
+      }
+    };
+
+    xhr.onerror = () => {
+      setStatus("❌ Errore di rete");
+    };
+
+    xhr.send(JSON.stringify({ path, content: base64 }));
+  };
 });
