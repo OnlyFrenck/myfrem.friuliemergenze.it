@@ -29,15 +29,13 @@ onAuthStateChanged(auth, (user) => {
 });
 
 fileInput.addEventListener("change", () => {
-  if (fileInput.files.length > 0) {
-    fileNameSpan.textContent = `✅ ${fileInput.files[0].name}`;
-  } else {
-    fileNameSpan.textContent = "Nessun file";
-  }
+  fileNameSpan.textContent = fileInput.files.length
+    ? `✅ ${fileInput.files[0].name}`
+    : "Nessun file";
 });
 
 function setStatus(msg) {
-  statusMsg.textContent = msg;
+  if (statusMsg) statusMsg.textContent = msg;
 }
 
 uploadBtn.addEventListener("click", (e) => {
@@ -58,8 +56,10 @@ uploadBtn.addEventListener("click", (e) => {
   reader.readAsDataURL(file);
 
   setStatus("⏳ Preparazione upload...");
-  progressBar.style.display = "block";
-  progressBar.value = 0;
+  if (progressBar) {
+    progressBar.style.display = "block";
+    progressBar.value = 0;
+  }
 
   reader.onload = () => {
     const base64 = reader.result.split(",")[1];
@@ -71,7 +71,7 @@ uploadBtn.addEventListener("click", (e) => {
     xhr.setRequestHeader("Content-Type", "application/json");
 
     xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable) {
+      if (event.lengthComputable && progressBar && progressText) {
         const percent = Math.round((event.loaded / event.total) * 100);
         progressBar.value = percent;
         progressText.textContent = percent + "%";
@@ -82,7 +82,7 @@ uploadBtn.addEventListener("click", (e) => {
       try {
         const data = JSON.parse(xhr.responseText);
 
-        if (!data.url) throw new Error("Upload fallito");
+        if (!data.url) throw new Error(data.error || "Upload fallito");
 
         await addDoc(collection(db, "photos"), {
           userId: currentUser.uid,
@@ -92,9 +92,11 @@ uploadBtn.addEventListener("click", (e) => {
         });
 
         setStatus("✅ Caricamento completato!");
-        progressText.textContent = "Completato ✅";
+        if (progressText) progressText.textContent = "Completato ✅";
         fileInput.value = "";
+
       } catch (err) {
+        console.error(err);
         setStatus("❌ Errore: " + err.message);
       }
     };
