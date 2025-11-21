@@ -2,7 +2,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/fireba
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-// ─── Firebase Config ─────────────────────────────────────────────────────────
+console.log("🔥 upload.js caricato");
+
+// ─── Firebase Config ────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyDWjMMe_yOtuVheeCPOwKiG8_-l35qdyKY",
   authDomain: "myfrem-friuliemergenze.firebaseapp.com",
@@ -16,27 +18,36 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ─── Elementi DOM ─────────────────────────────────────────────────────────────
-const fileInput = document.getElementById("inp-upl");
-const uploadBtn = document.getElementById("btn-upl");
-const statusMsg = document.getElementById("statusMsg");
-const fileNameSpan = document.getElementById("file-name");
+// ─── DOM ─────────────────────────────────────────────────────
+const fileInput   = document.getElementById("inp-upl");
+const uploadBtn   = document.getElementById("btn-upl");
+const statusMsg   = document.getElementById("statusMsg");
+const fileNameSpan= document.getElementById("file-name");
 
-// Se non li hai nel HTML, non esplode
+// fallback se non esistono in HTML
 const progressBar = document.getElementById("progressBar") || { style:{}, value:0 };
-const progressText = document.getElementById("progressText") || { textContent:"" };
+const progressText= document.getElementById("progressText") || { textContent:"" };
 
 let currentUser = null;
 
-// ─── Stato Login ──────────────────────────────────────────────────────────────
+// ─── Stato login ─────────────────────────────────────────────
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
-  if (!user) {
-    setStatus("⚠️ Devi essere loggato per caricare");
+
+  if (user) {
+    console.log("✅ Utente loggato:", user.uid);
+  } else {
+    console.log("❌ Nessun utente loggato");
+    setStatus("⚠️ Devi essere loggato");
   }
 });
 
-// ─── Mostra nome file ─────────────────────────────────────────────────────────
+// ─── UI helpers ──────────────────────────────────────────────
+function setStatus(msg) {
+  console.log("STATUS:", msg);
+  statusMsg.textContent = msg;
+}
+
 fileInput.addEventListener("change", () => {
   if (fileInput.files.length > 0) {
     fileNameSpan.textContent = `✅ ${fileInput.files[0].name}`;
@@ -45,14 +56,10 @@ fileInput.addEventListener("change", () => {
   }
 });
 
-// ─── Status helper ────────────────────────────────────────────────────────────
-function setStatus(msg) {
-  statusMsg.textContent = msg;
-}
-
-// ─── Upload ───────────────────────────────────────────────────────────────────
+// ─── Upload click ────────────────────────────────────────────
 uploadBtn.addEventListener("click", (e) => {
   e.preventDefault();
+  console.log("📤 Click su upload");
 
   if (!currentUser) {
     setStatus("❌ Devi essere loggato");
@@ -60,6 +67,7 @@ uploadBtn.addEventListener("click", (e) => {
   }
 
   const file = fileInput.files[0];
+
   if (!file) {
     setStatus("❌ Seleziona una foto");
     return;
@@ -74,9 +82,9 @@ uploadBtn.addEventListener("click", (e) => {
   setStatus("⏳ Upload in corso...");
 
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", "/api/upload");
+  xhr.open("POST", "/api/upload", true);
 
-  // Progress (se esiste barra)
+  // progress
   xhr.upload.onprogress = (event) => {
     if (event.lengthComputable && progressBar.style) {
       const percent = Math.round((event.loaded / event.total) * 100);
@@ -85,36 +93,45 @@ uploadBtn.addEventListener("click", (e) => {
     }
   };
 
-  // Risposta OK
+  // ✅ RISPOSTA DAL SERVER
   xhr.onload = async () => {
+    console.log("✅ onload chiamato");
+    console.log("HTTP Status:", xhr.status);
+    console.log("Raw response:", xhr.responseText);
+
     try {
       const data = JSON.parse(xhr.responseText);
+      console.log("Parsed JSON:", data);
 
       if (!data.url) {
-        throw new Error(data.error || "Upload fallito");
+        throw new Error(data.error || "URL non ricevuto");
       }
 
-      // Salva in Firestore
-      await addDoc(collection(db, "photos"), {
+      console.log("🔥 Salvataggio Firestore in corso...");
+
+      const docRef = await addDoc(collection(db, "photos"), {
         userId: currentUser.uid,
         name: file.name,
         url: data.url,
         createdAt: serverTimestamp()
       });
 
-      setStatus("✅ Foto caricata correttamente!");
-      if (progressText) progressText.textContent = "Completato ✅";
+      console.log("✅ Salvato in Firebase con ID:", docRef.id);
+
+      setStatus("✅ Foto caricata e salvata!");
       fileInput.value = "";
       fileNameSpan.textContent = "Nessun file";
+      progressText.textContent = "Completato ✅";
 
     } catch (err) {
-      console.error(err);
+      console.error("❌ Errore interno:", err);
       setStatus("❌ Errore: " + err.message);
     }
   };
 
-  // Errore rete
+  // ❌ ERRORI DI RETE
   xhr.onerror = () => {
+    console.error("❌ xhr.onerror chiamato");
     setStatus("❌ Errore di rete");
   };
 
