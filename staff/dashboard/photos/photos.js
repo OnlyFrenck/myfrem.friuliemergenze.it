@@ -1,7 +1,17 @@
 // ✅ Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { 
+  getFirestore, 
+  collection, 
+  query, 
+  where, 
+  getDocs, 
+  doc, 
+  getDoc,
+  updateDoc, 
+  serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 // 🔥 Config Firebase
 const firebaseConfig = {
@@ -13,61 +23,97 @@ const firebaseConfig = {
   appId: "1:362899702838:web:da96f62189ef1fa2010497",
   measurementId: "G-THNJG888RE"
 };
+
+// ✅ Init Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ✅ Riferimenti DOM
+// ✅ Elementi DOM
 const photosTableBody = document.getElementById("photosTableBody");
 const statusMsg = document.getElementById("statusMsg");
 const logoutBtn = document.getElementById("logoutBtn");
 
-// 🚪 Logout
+// ✅ Logout
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "/login";
 });
 
-// 📌 Messaggi di stato
+// ✅ Helper messaggi
 function setStatus(message, type = "info") {
+  if (!statusMsg) return;
   statusMsg.textContent = message;
   statusMsg.className = type;
 }
 
-// 🔑 Controllo autenticazione + ruolo staff
+// 🔐 Verifica auth + ruolo staff
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "/login";
     return;
   }
 
-  const userSnap = await getDocs(query(collection(db, "users"), where("__name__", "==", user.uid)));
-  if (userSnap.empty || userSnap.docs[0].data().role !== "staff") {
-    alert("❌ Accesso negato: non sei staff!");
-    window.location.href = "/dashboard";
-    return;
-  }
+  console.log("👤 Utente loggato:", user.uid);
 
-  // ✅ Carica foto in attesa
-  loadPendingPhotos();
+  try {
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      alert("❌ Profilo utente non trovato");
+      window.location.href = "/dashboard";
+      return;
+    }
+
+    const role = userSnap.data().role;
+    console.log("🎭 Ruolo:", role);
+
+    if (role !== "staff") {
+      alert("❌ Accesso negato: non sei staff");
+      window.location.href = "/dashboard";
+      return;
+    }
+
+    // ✅ Solo se è staff carichiamo le foto
+    loadPendingPhotos();
+
+  } catch (err) {
+    console.error("❌ Errore verifica staff:", err);
+    setStatus("Errore verifica permessi", "error");
+  }
 });
 
-// 📷 Carica tutte le foto pending
+// 📷 Carica foto in stato 'pending'
 async function loadPendingPhotos() {
   try {
-    const q = query(collection(db, "photos"), where("status", "==", "pending"));
+    setStatus("⏳ Caricamento foto in corso...");
+
+    const q = query(
+      collection(db, "photos"),
+      where("status", "==", "Foto in attesa di approvazione ⌛")
+    );
+
     const snapshot = await getDocs(q);
 
-    photosTableBody.innerHTML = ""; // pulizia
+    photosTableBody.innerHTML = "";
 
-    snapshot.forEach(docSnap => {
+    if (snapshot.empty) {
+      setStatus("✅ Nessuna foto da moderare");
+      return;
+    }
+
+    snapshot.forEach((docSnap) => {
       const photo = docSnap.data();
+
       const tr = document.createElement("tr");
 
       tr.innerHTML = `
-        <td><img src="${photo.url}" alt="${photo.name}" class="preview"></td>
-        <td>${photo.name}</td>
-        <td>${photo.userId}</td>
+        <td>
+          <img src="${photo.url}" alt="${photo.name}" class="preview" />
+        </td>
+        <td>${photo.name || "-"}</td>
+        <td>${photo.userId || "-"}</td>
         <td>${photo.createdAt?.toDate().toLocaleString() || "-"}</td>
         <td>
           <button class="approve" data-id="${docSnap.id}">✅ Approva</button>
@@ -78,13 +124,20 @@ async function loadPendingPhotos() {
       photosTableBody.appendChild(tr);
     });
 
-    // Aggiungi event listener ai pulsanti
-    document.querySelectorAll(".approve").forEach(btn => {
-      btn.addEventListener("click", () => updatePhotoStatus(btn.dataset.id, "approved"));
+    // ✅ Eventi bottoni
+    document.querySelectorAll(".approve").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        updatePhotoStatus(btn.dataset.id, "Approvata ✅");
+      });
     });
-    document.querySelectorAll(".reject").forEach(btn => {
-      btn.addEventListener("click", () => updatePhotoStatus(btn.dataset.id, "rejected"));
+
+    document.querySelectorAll(".reject").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        updatePhotoStatus(btn.dataset.id, "Rifiutata ❌");
+      });
     });
+
+    setStatus(`📸 Caricate ${snapshot.size} foto da moderare`);
 
   } catch (err) {
     console.error("❌ Errore caricamento foto:", err);
@@ -92,15 +145,20 @@ async function loadPendingPhotos() {
   }
 }
 
-// 🔄 Funzione per aggiornare stato foto
+// 🔄 Aggiorna stato foto
 async function updatePhotoStatus(photoId, status) {
   try {
-    await updateDoc(doc(db, "photos", photoId), {
+    setStatus("⏳ Aggiornamento in corso...");
+
+    const ref = doc(db, "photos", photoId);
+    await updateDoc(ref, {
       status: status,
       reviewedAt: serverTimestamp()
     });
-    setStatus(`✅ Foto ${status}`, "success");
-    loadPendingPhotos(); // ricarica lista
+
+    setStatus(`✅ Foto ${status}`);
+    loadPendingPhotos();
+
   } catch (err) {
     console.error("❌ Errore aggiornamento stato:", err);
     setStatus("Errore durante l'aggiornamento", "error");
