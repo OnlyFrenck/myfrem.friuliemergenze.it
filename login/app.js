@@ -85,6 +85,7 @@ if (loginForm) {
 
 // --- REGISTRAZIONE ---
 const registerForm = document.getElementById("registerForm");
+
 if (registerForm) {
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -96,7 +97,7 @@ if (registerForm) {
     const password = document.getElementById("registerPassword").value;
 
     try {
-      // verifica username unico
+      // 🔍 Controllo username unico
       const existing = await db
         .collection("users")
         .where("username", "==", username)
@@ -108,26 +109,36 @@ if (registerForm) {
         return;
       }
 
+      // ✅ Crea utente
       const userCred = await auth.createUserWithEmailAndPassword(email, password);
       const user = userCred.user;
 
-      clg("✅ Registrazione riuscita:", user.uid);
+      console.log("✅ Registrazione riuscita:", user.uid);
 
+      // ✅ Invia email di verifica
+      await user.sendEmailVerification({
+        url: "https://myfrem.friuliemergenze.it/login/" // redirect dopo verifica
+      });
+
+      // ✅ Crea profilo su Firestore
       await db.collection("users").doc(user.uid).set({
         email,
         name,
         surname,
         username,
         role: "user",
+        emailVerified: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-      const token = await user.getIdToken();
-      localStorage.setItem("userToken", token);
+      // 🔒 Logout forzato finché non verifica mail
+      await auth.signOut();
 
-      window.location.href = "/login/";
+      // ✅ Vai alla pagina "controlla la tua email"
+      window.location.href = "/login/signup/verify-email/";
+
     } catch (err) {
-      crr("❌ Errore registrazione:", err);
+      console.error("❌ Errore registrazione:", err);
       alert("Errore registrazione: " + err.message);
     }
   });
