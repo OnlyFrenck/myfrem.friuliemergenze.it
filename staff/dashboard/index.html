@@ -9,7 +9,6 @@
   <script type="module" src="/staff/dashboard/staff.js"></script>
 </head>
 <body>
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="logo">
       <img src="https://friuliemergenze.it/assets/logo.png" alt="MyFrEM Logo">
@@ -24,9 +23,18 @@
     <button id="logoutBtn" class="logout">🚪 Logout</button>
   </aside>
 
-  <!-- Main content -->
   <div class="main-content">
-    <h1>📊 Panoramica Staff</h1>
+    <div class="top-bar">
+      <h1>📊 Panoramica Staff</h1>
+      <div class="live-status">🟢 Sistema operativo</div>
+    </div>
+
+    <div class="quick-actions">
+      <button class="quick-btn">➕ Aggiungi staffer</button>
+      <button class="quick-btn">📢 Invia avviso</button>
+      <button class="quick-btn">🧹 Pulizia cache</button>
+    </div>
+
     <div class="stats-grid">
       <div class="stat-box">
         <h2 id="totalUsers">0</h2>
@@ -44,6 +52,13 @@
         <h2 id="rejectedPhotos">0</h2>
         <p>Foto rifiutate</p>
       </div>
+    </div>
+
+    <div class="activity-box">
+      <h3>🕒 Attività recenti</h3>
+      <ul id="activityLog">
+        <li>In attesa di eventi...</li>
+      </ul>
     </div>
   </div>
 </body>
