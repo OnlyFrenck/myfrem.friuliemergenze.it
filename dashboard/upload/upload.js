@@ -139,3 +139,11 @@ uploadBtn.addEventListener("click", (e) => {
 
   xhr.send(formData);
 });
+
+// --- Logout ---
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  console.log("🚪 Logout in corso...");
+  await auth.signOut();
+  console.log("✅ Logout completato, redirect...");
+  window.location.href = "/login/";
+});
