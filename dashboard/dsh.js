@@ -58,9 +58,9 @@ auth.onAuthStateChanged(async (user) => {
     photosSnap.forEach(doc => {
       const photo = doc.data();
       total++;
-      if (photo.status === "Foto accettata 👍") approved++;
+      if (photo.status === "Approvata ✅") approved++;
       if (photo.status === "Foto in attesa di approvazione ⌛") pending++;
-      if (photo.status === "Foto rifiutata 🚫") rejected++;
+      if (photo.status === "Rifiutata ❌") rejected++;
 
       const li = document.createElement("li");
       li.innerHTML = `<p>📸 Foto caricata il ${photo.createdAt?.toDate().toLocaleString()} - Stato: <b>${photo.status}</b></p>`;

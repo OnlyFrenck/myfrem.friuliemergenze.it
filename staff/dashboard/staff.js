@@ -61,19 +61,19 @@ async function loadStats() {
 
     // 🔹 Foto pending
     const pendingSnap = await getDocs(
-      query(collection(db, "photos"), where("status", "==", "pending"))
+      query(collection(db, "photos"), where("status", "==", "Foto in attesa di approvazione ⌛"))
     );
     pendingPhotosEl.textContent = pendingSnap.size;
 
     // 🔹 Foto approvate
     const approvedSnap = await getDocs(
-      query(collection(db, "photos"), where("status", "==", "approved"))
+      query(collection(db, "photos"), where("status", "==", "Approvata ✅"))
     );
     approvedPhotosEl.textContent = approvedSnap.size;
 
     // 🔹 Foto rifiutate
     const rejectedSnap = await getDocs(
-      query(collection(db, "photos"), where("status", "==", "rejected"))
+      query(collection(db, "photos"), where("status", "==", "Rifiutata ❌"))
     );
     rejectedPhotosEl.textContent = rejectedSnap.size;
 
