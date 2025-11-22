@@ -1,7 +1,3 @@
-// app.js – gestione login/registrazione/reset password con Firebase
-const doc = firebase.firestore.doc;
-const getDoc = firebase.firestore.getDoc;
-
 const clg = console.log;
 const crr = console.error;
 
@@ -25,15 +21,43 @@ const db = firebase.firestore();
 
 clg("✅ Firebase inizializzato con successo.");
 
-// --- LOGIN ---
+// ─────────────────────────────────────────────────────────────
+// Helper: controlla se è un'email
+function isEmail(value) {
+  return value.includes("@");
+}
+
+// ─── LOGIN (EMAIL O USERNAME) ────────────────────────────────
 const loginForm = document.getElementById("loginForm");
+
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = document.getElementById("loginEmail").value;
+
+    const input = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value;
 
     try {
+      let email = input;
+
+      // 🔍 Se NON è email → cerca lo username in Firestore
+      if (!isEmail(input)) {
+        const snap = await db
+          .collection("users")
+          .where("username", "==", input)
+          .limit(1)
+          .get();
+
+        if (snap.empty) {
+          alert("❌ Username non trovato");
+          return;
+        }
+
+        const userData = snap.docs[0].data();
+        email = userData.email;
+      }
+
+      // 🔐 Login Firebase
       const userCred = await auth.signInWithEmailAndPassword(email, password);
       const user = userCred.user;
       clg("✅ Login riuscito:", user.uid);
@@ -42,22 +66,25 @@ if (loginForm) {
       const token = await user.getIdToken();
       localStorage.setItem("userToken", token);
 
-      // 📌 In v8 si usa db.collection().doc().get()
+      // carica profilo
       const userDoc = await db.collection("users").doc(user.uid).get();
 
-      if (userDoc.exists) {
-        const userData = userDoc.data();
-        clg("ℹ️ Dati utente:", userData);
-
-        if (userData.role === "staff") {
-          window.location.href = "/staff";
-        } else {
-          window.location.href = "/dashboard";
-        }
-      } else {
+      if (!userDoc.exists) {
         crr("❌ Nessun documento trovato per l’utente!");
         alert("Errore: il tuo account non ha un profilo associato.");
+        return;
       }
+
+      const userData = userDoc.data();
+      clg("ℹ️ Dati utente:", userData);
+
+      // redirect per ruolo
+      if (userData.role === "staff") {
+        window.location.href = "/staff";
+      } else {
+        window.location.href = "/dashboard";
+      }
+
     } catch (err) {
       crr("❌ Errore login:", err);
       alert("Errore login: " + err.message);
@@ -65,11 +92,13 @@ if (loginForm) {
   });
 }
 
-// --- REGISTRAZIONE ---
+// ─── REGISTRAZIONE ────────────────────────────────────────────
 const registerForm = document.getElementById("registerForm");
+
 if (registerForm) {
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     const name = document.getElementById("registerName").value;
     const surname = document.getElementById("registerSurname").value;
     const email = document.getElementById("registerEmail").value;
@@ -77,25 +106,37 @@ if (registerForm) {
     const password = document.getElementById("registerPassword").value;
 
     try {
+      // 🚫 Controlla username duplicato
+      const userCheck = await db
+        .collection("users")
+        .where("username", "==", username)
+        .limit(1)
+        .get();
+
+      if (!userCheck.empty) {
+        alert("❌ Username già in uso");
+        return;
+      }
+
       const userCred = await auth.createUserWithEmailAndPassword(email, password);
       const user = userCred.user;
+
       clg("✅ Registrazione riuscita:", user.uid);
 
-      // 🔹 Crea doc utente
       await db.collection("users").doc(user.uid).set({
         email,
         name,
         surname,
         username,
-        role: "user", // default
+        role: "user",
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
 
       const token = await user.getIdToken();
       localStorage.setItem("userToken", token);
 
-      // redirect
       window.location.href = "/login/";
+
     } catch (err) {
       crr("❌ Errore registrazione:", err);
       alert("Errore registrazione: " + err.message);
@@ -103,11 +144,13 @@ if (registerForm) {
   });
 }
 
-// --- RESET PASSWORD ---
+// ─── RESET PASSWORD ───────────────────────────────────────────
 const resetForm = document.getElementById("resetForm");
+
 if (resetForm) {
   resetForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     const email = e.target["resetEmail"].value;
 
     try {
@@ -120,7 +163,7 @@ if (resetForm) {
   });
 }
 
-// --- SESSIONE (rimani loggato) ---
+// ─── SESSIONE ─────────────────────────────────────────────────
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     clg("👀 Utente loggato:", user.uid);
@@ -131,15 +174,15 @@ auth.onAuthStateChanged(async (user) => {
   }
 });
 
-// --- TOGGLE PASSWORD VISIBILITY ---
+// ─── TOGGLE PASSWORD ─────────────────────────────────────────
 function togglePassword(inputId, button) {
   const input = document.getElementById(inputId);
-  
+
   if (input.type === "password") {
     input.type = "text";
-    button.textContent = "🚫"; // password visibile
+    button.textContent = "🚫";
   } else {
     input.type = "password";
-    button.textContent = "👁"; // password nascosta
+    button.textContent = "👁";
   }
 }
