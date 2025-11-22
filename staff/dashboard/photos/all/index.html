@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Tutte le Foto | MyFrEM Staff</title>
+  <link rel="stylesheet" href="/staff/dashboard/staff.css">
+  <script type="module" src="./all-photos.js"></script>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="https://friuliemergenze.it/assets/logo.png">
+      <h2>MyFrEM Staff</h2>
+    </div>
+    <nav>
+      <a href="/staff">📊 Dashboard</a>
+      <a href="/staff/dashboard/photos/">🖼️ Moderazione foto</a>
+      <a href="/staff/dashboard/photos/all/" class="active">🗂️ Tutte le foto</a>
+      <a href="/staff/dashboard/users/">👥 Utenti</a>
+    </nav>
+    <button id="logoutBtn" class="logout">🚪 Logout</button>
+  </aside>
+
+  <div class="main-content">
+    <h1>🗂️ Tutte le foto caricate</h1>
+    <table class="photos-table">
+      <thead>
+        <tr>
+          <th>Anteprima</th>
+          <th>Titolo</th>
+          <th>Utente</th>
+          <th>Stato</th>
+          <th>Data</th>
+        </tr>
+      </thead>
+      <tbody id="photosTbody">
+        <tr><td colspan="5">Caricamento...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
