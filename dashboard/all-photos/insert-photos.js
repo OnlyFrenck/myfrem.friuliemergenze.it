@@ -57,7 +57,7 @@ async function loadAllPhotos(userId) {
 
       card.innerHTML = `
         <div class="photo-info">
-          <img src="https://friuliemergenze.it/assets/logo.png" alt="Logo MyFrEM" class="photo-img"
+          <img src="${data.url}" alt="Foto utente" class="photo-img" />
           <h4>${data.name}</h4>
           <p>Stato: <span class="status ${data.status}">${data.status}</span></p>
           <p>Caricata: ${data.createdAt?.toDate().toLocaleString() || "–"}</p>
