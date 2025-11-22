@@ -114,6 +114,7 @@ uploadBtn.addEventListener("click", (e) => {
         userId: currentUser.uid,
         name: file.name,
         url: data.url,
+        status: "Foto in attesa di approvazione ⌛",
         createdAt: serverTimestamp()
       });
 
