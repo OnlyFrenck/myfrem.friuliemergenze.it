@@ -113,6 +113,8 @@ async function loadPendingPhotos() {
           <img src="${photo.url}" alt="${photo.name}" class="preview" />
         </td>
         <td>${photo.name || "-"}</td>
+        td>${photo.title || "-"}</td>
+        <td>${photo.description || "-"}</td>
         <td>${photo.userId || "-"}</td>
         <td>${photo.createdAt?.toDate().toLocaleString() || "-"}</td>
         <td>
