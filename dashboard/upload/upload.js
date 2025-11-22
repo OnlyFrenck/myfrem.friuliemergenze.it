@@ -24,6 +24,8 @@ const fileInput   = document.getElementById("inp-upl");
 const uploadBtn   = document.getElementById("btn-upl");
 const statusMsg   = document.getElementById("statusMsg");
 const fileNameSpan= document.getElementById("file-name");
+const titleInput  = document.getElementById("title");
+const descInput   = document.getElementById("description");
 
 // fallback se non esistono in HTML
 const progressBar = document.getElementById("progressBar") || { style:{}, value:0 };
@@ -112,6 +114,8 @@ uploadBtn.addEventListener("click", (e) => {
 
       const docRef = await addDoc(collection(db, "photos"), {
         userId: currentUser.uid,
+        title: titleInput.value || "",
+        description: descInput.value || "",
         name: file.name,
         url: data.url,
         status: "Foto in attesa di approvazione ⌛",
