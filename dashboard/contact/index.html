@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Contattaci | MyFrEM</title>
+  <link rel="shortcut icon" href="https://friuliemergenze.it/assets/logo.png" type="image/x-icon">
+  <link rel="stylesheet" href="/dashboard/dsh.css">
+  <script type="module" src="./contact.js"></script>
+  <style>
+    .contact-container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 25px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.08);
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="https://friuliemergenze.it/assets/logo.png" alt="MyFrEM Logo">
+      <h2>MyFrEM</h2>
+    </div>
+    <nav>
+      <a href="/dashboard">🏠 Home</a>
+      <a href="/dashboard/profile">👤 Profilo</a>
+      <a href="/dashboard/upload">📸 Carica una foto</a>
+      <a href="/dashboard/all-photos">📸 Le mie foto</a>
+      <a href="/dashboard/contact/" class="active">📞 Contattaci</a>
+    </nav>
+    <button id="logoutBtn" class="logout">🚪 Logout</button>
+  </aside>
+
+  <div class="main-content">
+    <div class="contact-container">
+      <h2>📩 Contattaci</h2>
+      <p>Hai trovato un bug? Hai bisogno di assistenza? Inviaci un messaggio.</p>
+
+      <form id="contactForm">
+        <input type="text" id="subject" placeholder="Oggetto del messaggio" required>
+        <textarea id="message" rows="6" placeholder="Scrivi qui il tuo messaggio..." required></textarea>
+        <button type="submit">Invia messaggio</button>
+      </form>
+
+      <p id="result" style="margin-top:10px;"></p>
+    </div>
+  </div>
+</body>
+</html>
