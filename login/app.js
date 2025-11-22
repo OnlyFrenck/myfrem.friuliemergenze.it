@@ -1,8 +1,6 @@
 const clg = console.log;
 const crr = console.error;
 
-clg("👉 Inizializzo Firebase...");
-
 // ✅ Configurazione Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
@@ -19,70 +17,62 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-clg("✅ Firebase inizializzato con successo.");
+clg("✅ Firebase inizializzato");
 
-// ─────────────────────────────────────────────────────────────
-// Helper: controlla se è un'email
-function isEmail(value) {
-  return value.includes("@");
-}
-
-// ─── LOGIN (EMAIL O USERNAME) ────────────────────────────────
+// --- LOGIN (EMAIL o USERNAME) ---
 const loginForm = document.getElementById("loginForm");
-
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const input = document.getElementById("loginEmail").value.trim();
+    const identifier = document.getElementById("loginEmail").value; // ora può essere email o username
     const password = document.getElementById("loginPassword").value;
 
-    try {
-      let email = input;
+    let emailToUse = identifier;
 
-      // 🔍 Se NON è email → cerca lo username in Firestore
-      if (!isEmail(input)) {
-        const snap = await db
+    try {
+      // 🔁 Se NON è una email, cerchiamo lo username
+      if (!identifier.includes("@")) {
+        clg("🔍 Cerco username:", identifier);
+
+        const userSnap = await db
           .collection("users")
-          .where("username", "==", input)
+          .where("username", "==", identifier)
           .limit(1)
           .get();
 
-        if (snap.empty) {
+        if (userSnap.empty) {
           alert("❌ Username non trovato");
           return;
         }
 
-        const userData = snap.docs[0].data();
-        email = userData.email;
+        const userData = userSnap.docs[0].data();
+        emailToUse = userData.email;
+        clg("✅ Username trovato, email:", emailToUse);
       }
 
-      // 🔐 Login Firebase
-      const userCred = await auth.signInWithEmailAndPassword(email, password);
+      // ✅ Login con email vera
+      const userCred = await auth.signInWithEmailAndPassword(emailToUse, password);
       const user = userCred.user;
+
       clg("✅ Login riuscito:", user.uid);
 
-      // token per sessione
       const token = await user.getIdToken();
       localStorage.setItem("userToken", token);
 
-      // carica profilo
+      // Recupera ruolo
       const userDoc = await db.collection("users").doc(user.uid).get();
 
-      if (!userDoc.exists) {
-        crr("❌ Nessun documento trovato per l’utente!");
-        alert("Errore: il tuo account non ha un profilo associato.");
-        return;
-      }
+      if (userDoc.exists) {
+        const userData = userDoc.data();
 
-      const userData = userDoc.data();
-      clg("ℹ️ Dati utente:", userData);
-
-      // redirect per ruolo
-      if (userData.role === "staff") {
-        window.location.href = "/staff";
+        if (userData.role === "staff") {
+          window.location.href = "/staff";
+        } else {
+          window.location.href = "/dashboard";
+        }
       } else {
-        window.location.href = "/dashboard";
+        alert("Profilo utente non trovato.");
       }
 
     } catch (err) {
@@ -92,9 +82,9 @@ if (loginForm) {
   });
 }
 
-// ─── REGISTRAZIONE ────────────────────────────────────────────
-const registerForm = document.getElementById("registerForm");
 
+// --- REGISTRAZIONE ---
+const registerForm = document.getElementById("registerForm");
 if (registerForm) {
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -106,14 +96,14 @@ if (registerForm) {
     const password = document.getElementById("registerPassword").value;
 
     try {
-      // 🚫 Controlla username duplicato
-      const userCheck = await db
+      // verifica username unico
+      const existing = await db
         .collection("users")
         .where("username", "==", username)
         .limit(1)
         .get();
 
-      if (!userCheck.empty) {
+      if (!existing.empty) {
         alert("❌ Username già in uso");
         return;
       }
@@ -136,7 +126,6 @@ if (registerForm) {
       localStorage.setItem("userToken", token);
 
       window.location.href = "/login/";
-
     } catch (err) {
       crr("❌ Errore registrazione:", err);
       alert("Errore registrazione: " + err.message);
@@ -144,13 +133,12 @@ if (registerForm) {
   });
 }
 
-// ─── RESET PASSWORD ───────────────────────────────────────────
-const resetForm = document.getElementById("resetForm");
 
+// --- RESET PASSWORD ---
+const resetForm = document.getElementById("resetForm");
 if (resetForm) {
   resetForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     const email = e.target["resetEmail"].value;
 
     try {
@@ -163,7 +151,8 @@ if (resetForm) {
   });
 }
 
-// ─── SESSIONE ─────────────────────────────────────────────────
+
+// --- SESSIONE ---
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     clg("👀 Utente loggato:", user.uid);
@@ -174,7 +163,8 @@ auth.onAuthStateChanged(async (user) => {
   }
 });
 
-// ─── TOGGLE PASSWORD ─────────────────────────────────────────
+
+// --- TOGGLE PASSWORD ---
 function togglePassword(inputId, button) {
   const input = document.getElementById(inputId);
 
