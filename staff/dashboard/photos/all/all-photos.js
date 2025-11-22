@@ -68,7 +68,7 @@ async function loadAllPhotos() {
 
       tbody.innerHTML += `
         <tr>
-          <td><img src="${p.thumbUrl || p.imageUrl}" class="preview"></td>
+          <td><img src="${p.url}" class="preview"></td>
           <td>${p.title || "-"}</td>
           <td>${p.userName || p.userId}</td>
           <td style="color:${statusColor}">${p.status}</td>
