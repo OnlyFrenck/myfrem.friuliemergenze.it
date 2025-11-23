@@ -1,7 +1,6 @@
-const clg = console.log;
-const crr = console.error;
-
-// ✅ Configurazione Firebase
+// ==========================
+// 🔥 Firebase Config
+// ==========================
 const firebaseConfig = {
   apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
   authDomain: "friuli-emergenze.firebaseapp.com",
@@ -12,67 +11,74 @@ const firebaseConfig = {
   measurementId: "G-THNJG888RE"
 };
 
-// ✅ Inizializza Firebase
+// ==========================
+// ✅ Init Firebase
+// ==========================
 firebase.initializeApp(firebaseConfig);
+
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+const clg = console.log;
+const crr = console.error;
+
 clg("✅ Firebase inizializzato");
 
-// --- LOGIN (EMAIL o USERNAME) ---
+
+// ==========================
+// 🟢 LOGIN EMAIL o USERNAME
+// ==========================
 const loginForm = document.getElementById("loginForm");
+
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const identifier = document.getElementById("loginEmail").value; // ora può essere email o username
+    const identifier = document.getElementById("loginEmail").value;
     const password = document.getElementById("loginPassword").value;
 
     let emailToUse = identifier;
 
     try {
-      // 🔁 Se NON è una email, cerchiamo lo username
       if (!identifier.includes("@")) {
         clg("🔍 Cerco username:", identifier);
 
-        const userSnap = await db
+        const snap = await db
           .collection("users")
           .where("username", "==", identifier)
           .limit(1)
           .get();
 
-        if (userSnap.empty) {
+        if (snap.empty) {
           alert("❌ Username non trovato");
           return;
         }
 
-        const userData = userSnap.docs[0].data();
-        emailToUse = userData.email;
-        clg("✅ Username trovato, email:", emailToUse);
+        emailToUse = snap.docs[0].data().email;
+        clg("✅ Username risolto in email:", emailToUse);
       }
 
-      // ✅ Login con email vera
-      const userCred = await auth.signInWithEmailAndPassword(emailToUse, password);
-      const user = userCred.user;
+      const cred = await auth.signInWithEmailAndPassword(emailToUse, password);
+      const user = cred.user;
 
       clg("✅ Login riuscito:", user.uid);
 
       const token = await user.getIdToken();
       localStorage.setItem("userToken", token);
 
-      // Recupera ruolo
       const userDoc = await db.collection("users").doc(user.uid).get();
 
-      if (userDoc.exists) {
-        const userData = userDoc.data();
+      if (!userDoc.exists) {
+        alert("Profilo non trovato");
+        return;
+      }
 
-        if (userData.role === "staff") {
-          window.location.href = "/staff";
-        } else {
-          window.location.href = "/dashboard";
-        }
+      const userData = userDoc.data();
+
+      if (userData.role === "staff") {
+        window.location.href = "/staff";
       } else {
-        alert("Profilo utente non trovato.");
+        window.location.href = "/dashboard";
       }
 
     } catch (err) {
@@ -83,7 +89,53 @@ if (loginForm) {
 }
 
 
-// --- REGISTRAZIONE ---
+// ==========================
+// 🔵 LOGIN CON GOOGLE
+// ==========================
+const googleBtn = document.getElementById("googleLoginBtn");
+
+if (googleBtn) {
+  googleBtn.addEventListener("click", async () => {
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+
+      const result = await auth.signInWithPopup(provider);
+      const user = result.user;
+
+      clg("✅ Login Google:", user.uid);
+
+      const userRef = db.collection("users").doc(user.uid);
+      const snap = await userRef.get();
+
+      if (!snap.exists) {
+        await userRef.set({
+          email: user.email,
+          name: user.displayName || "",
+          role: "user",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+
+      const finalDoc = await userRef.get();
+      const data = finalDoc.data();
+
+      if (data.role === "staff") {
+        window.location.href = "/staff";
+      } else {
+        window.location.href = "/dashboard";
+      }
+
+    } catch (err) {
+      crr("❌ Errore Google:", err);
+      alert("Errore Google: " + err.message);
+    }
+  });
+}
+
+
+// ==========================
+// 🟣 REGISTRAZIONE
+// ==========================
 const registerForm = document.getElementById("registerForm");
 
 if (registerForm) {
@@ -97,7 +149,6 @@ if (registerForm) {
     const password = document.getElementById("registerPassword").value;
 
     try {
-      // 🔍 Controllo username unico
       const existing = await db
         .collection("users")
         .where("username", "==", username)
@@ -109,18 +160,15 @@ if (registerForm) {
         return;
       }
 
-      // ✅ Crea utente
-      const userCred = await auth.createUserWithEmailAndPassword(email, password);
-      const user = userCred.user;
+      const cred = await auth.createUserWithEmailAndPassword(email, password);
+      const user = cred.user;
 
-      console.log("✅ Registrazione riuscita:", user.uid);
+      clg("✅ Registrazione OK:", user.uid);
 
-      // ✅ Invia email di verifica
       await user.sendEmailVerification({
-        url: "https://myfrem.friuliemergenze.it/login/" // redirect dopo verifica
+        url: "https://myfrem.friuliemergenze.it/login/"
       });
 
-      // ✅ Crea profilo su Firestore
       await db.collection("users").doc(user.uid).set({
         email,
         name,
@@ -131,51 +179,57 @@ if (registerForm) {
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-      // 🔒 Logout forzato finché non verifica mail
       await auth.signOut();
 
-      // ✅ Vai alla pagina "controlla la tua email"
       window.location.href = "/login/signup/verify-email/";
 
     } catch (err) {
-      console.error("❌ Errore registrazione:", err);
+      crr("❌ Errore registrazione:", err);
       alert("Errore registrazione: " + err.message);
     }
   });
 }
 
 
-// --- RESET PASSWORD ---
+// ==========================
+// 🔁 RESET PASSWORD
+// ==========================
 const resetForm = document.getElementById("resetForm");
+
 if (resetForm) {
   resetForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     const email = e.target["resetEmail"].value;
 
     try {
       await auth.sendPasswordResetEmail(email);
       alert("📩 Email di reset inviata!");
     } catch (err) {
-      crr("❌ Errore reset password:", err);
+      crr("❌ Reset error:", err);
       alert("Errore reset: " + err.message);
     }
   });
 }
 
 
-// --- SESSIONE ---
+// ==========================
+// 👀 SESSIONE UTENTE
+// ==========================
 auth.onAuthStateChanged(async (user) => {
   if (user) {
-    clg("👀 Utente loggato:", user.uid);
+    clg("👤 Utente loggato:", user.uid);
     const token = await user.getIdToken();
     localStorage.setItem("userToken", token);
   } else {
-    clg("⚠️ Nessun utente loggato");
+    clg("⚠️ Nessun utente");
   }
 });
 
 
-// --- TOGGLE PASSWORD ---
+// ==========================
+// 👁 TOGGLE PASSWORD
+// ==========================
 function togglePassword(inputId, button) {
   const input = document.getElementById(inputId);
 
