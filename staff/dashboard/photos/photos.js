@@ -1,19 +1,17 @@
-// ✅ Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { 
-  getFirestore, 
-  collection, 
-  query, 
-  where, 
-  getDocs, 
-  doc, 
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
   getDoc,
-  updateDoc, 
-  serverTimestamp 
+  updateDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-// 🔥 Config Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
   authDomain: "friuli-emergenze.firebaseapp.com",
@@ -24,15 +22,15 @@ const firebaseConfig = {
   measurementId: "G-THNJG888RE"
 };
 
-// ✅ Init Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ✅ Elementi DOM
 const photosTableBody = document.getElementById("photosTableBody");
 const statusMsg = document.getElementById("statusMsg");
 const logoutBtn = document.getElementById("logoutBtn");
+
+let usersMap = {};
 
 // ✅ Logout
 logoutBtn.addEventListener("click", async () => {
@@ -54,40 +52,36 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  console.log("👤 Utente loggato:", user.uid);
-
   try {
     const userRef = doc(db, "users", user.uid);
     const userSnap = await getDoc(userRef);
 
-    if (!userSnap.exists()) {
-      alert("❌ Profilo utente non trovato");
+    if (!userSnap.exists() || userSnap.data().role !== "staff") {
       window.location.href = "/dashboard";
       return;
     }
 
-    const role = userSnap.data().role;
-    console.log("🎭 Ruolo:", role);
-
-    if (role !== "staff") {
-      alert("❌ Accesso negato: non sei staff");
-      window.location.href = "/dashboard";
-      return;
-    }
-
-    // ✅ Solo se è staff carichiamo le foto
+    await loadUsersMap();
     loadPendingPhotos();
 
   } catch (err) {
-    console.error("❌ Errore verifica staff:", err);
+    console.error("Errore verifica staff:", err);
     setStatus("Errore verifica permessi", "error");
   }
 });
 
-// 📷 Carica foto in stato 'pending'
+// ✅ Carica utenti e crea mappa UID -> username
+async function loadUsersMap() {
+  const snap = await getDocs(collection(db, "users"));
+  snap.forEach(docSnap => {
+    usersMap[docSnap.id] = docSnap.data().username || "Sconosciuto";
+  });
+}
+
+// 📷 Carica foto in attesa
 async function loadPendingPhotos() {
   try {
-    setStatus("⏳ Caricamento foto in corso...");
+    setStatus("⏳ Caricamento foto...");
 
     const q = query(
       collection(db, "photos"),
@@ -95,7 +89,6 @@ async function loadPendingPhotos() {
     );
 
     const snapshot = await getDocs(q);
-
     photosTableBody.innerHTML = "";
 
     if (snapshot.empty) {
@@ -107,26 +100,21 @@ async function loadPendingPhotos() {
       const photo = docSnap.data();
 
       const tr = document.createElement("tr");
-
       tr.innerHTML = `
-        <td>
-          <img src="${photo.url}" alt="${photo.name}" class="preview" />
-        </td>
+        <td><img src="${photo.url}" class="preview" /></td>
         <td>${photo.name || "-"}</td>
         <td>${photo.title || "-"}</td>
         <td>${photo.description || "-"}</td>
-        <td>${photo.userId || "-"}</td>
+        <td>${usersMap[photo.userId] || "Sconosciuto"}</td>
         <td>${photo.createdAt?.toDate().toLocaleString() || "-"}</td>
         <td>
           <button class="approve" data-id="${docSnap.id}">✅ Approva</button>
           <button class="reject" data-id="${docSnap.id}">❌ Rifiuta</button>
         </td>
       `;
-
       photosTableBody.appendChild(tr);
     });
 
-    // ✅ Eventi bottoni
     document.querySelectorAll(".approve").forEach((btn) => {
       btn.addEventListener("click", () => {
         updatePhotoStatus(btn.dataset.id, "Approvata ✅");
@@ -139,21 +127,20 @@ async function loadPendingPhotos() {
       });
     });
 
-    setStatus(`📸 Caricate ${snapshot.size} foto da moderare`);
+    setStatus(`📸 Caricate ${snapshot.size} foto`);
 
   } catch (err) {
-    console.error("❌ Errore caricamento foto:", err);
-    setStatus("Errore durante il caricamento delle foto", "error");
+    console.error("Errore caricamento foto:", err);
+    setStatus("Errore caricamento foto", "error");
   }
 }
 
-// 🔄 Aggiorna stato foto
+// 🔄 Approva / Rifiuta
 async function updatePhotoStatus(photoId, status) {
   try {
-    setStatus("⏳ Aggiornamento in corso...");
+    setStatus("⏳ Aggiornamento...");
 
-    const ref = doc(db, "photos", photoId);
-    await updateDoc(ref, {
+    await updateDoc(doc(db, "photos", photoId), {
       status: status,
       reviewedAt: serverTimestamp()
     });
@@ -162,7 +149,7 @@ async function updatePhotoStatus(photoId, status) {
     loadPendingPhotos();
 
   } catch (err) {
-    console.error("❌ Errore aggiornamento stato:", err);
-    setStatus("Errore durante l'aggiornamento", "error");
+    console.error("Errore aggiornamento:", err);
+    setStatus("Errore aggiornamento", "error");
   }
 }
