@@ -58,10 +58,18 @@ async function loadAllPhotos(userId) {
       card.innerHTML = `
         <div class="photo-info">
           <img src="${data.url}" alt="Foto utente" class="photo-img" />
-          <h4>${data.title}</h4>
+          <h4>${data.title || ""}</h4>
           <p>Descrizione: ${data.description || "–"}</p>
           <p>Stato: <span class="status ${data.status}">${data.status}</span></p>
           <p>Caricata: ${data.createdAt?.toDate().toLocaleString() || "–"}</p>
+
+          ${
+            data.galleryLink
+              ? `<a href="${data.galleryLink}" target="_blank" class="gallery-link">
+                   🔗 Vai al mezzo in galleria
+                 </a>`
+              : ""
+          }
         </div>
       `;
 
