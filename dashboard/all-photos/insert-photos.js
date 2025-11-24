@@ -64,8 +64,8 @@ async function loadAllPhotos(userId) {
           <p>Caricata: ${data.createdAt?.toDate().toLocaleString() || "–"}</p>
 
           ${
-            data.galleryLink
-              ? `<a href="${data.galleryLink}" target="_blank" class="gallery-link">
+            data.vehicleLink
+              ? `<a href="${data.vehicleLink}" target="_blank" class="gallery-link">
                    🔗 Vai al mezzo in galleria
                  </a>`
               : ""
