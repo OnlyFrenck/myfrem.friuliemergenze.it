@@ -21,17 +21,16 @@ const firebaseConfig = {
   appId: "1:362899702838:web:da96f62189ef1fa2010497"
 };
 
+console.log("✅ Script profilo caricato");
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ✅ Prende username da URL /u/mariorossi
-const pathParts = window.location.pathname.split("/");
-const username = pathParts[pathParts.length - 1];
+// 🔎 Prendo UID dall'URL
+const params = new URLSearchParams(window.location.search);
+const userId = params.get("id");
 
-if (!username || username === "u") {
-  document.body.innerHTML = "<h2>Profilo non trovato</h2>";
-  throw new Error("Username mancante");
-}
+console.log("🔎 UID letto da URL:", userId);
 
 // DOM
 const profilePic = document.getElementById("profilePic");
@@ -39,55 +38,72 @@ const usernameEl = document.getElementById("username");
 const bioEl = document.getElementById("bio");
 const photosContainer = document.getElementById("userPhotos");
 
+// Avvio
 loadProfile();
 
 async function loadProfile() {
   try {
-    // 🔎 Cerca utente per username
-    const userQuery = query(
-      collection(db, "users"),
-      where("username", "==", username),
-      limit(1)
-    );
+    console.log("🚀 Inizio caricamento profilo...");
 
-    const userSnap = await getDocs(userQuery);
+    if (!userId) {
+      console.warn("⚠️ Nessun userId nell'URL");
+      document.body.innerHTML = "<h2>Profilo non trovato (ID mancante)</h2>";
+      return;
+    }
 
-    if (userSnap.empty) {
+    // 🔹 Carica utente
+    console.log("📥 Fetch user doc:", userId);
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+
+    console.log("📦 userSnap.exists():", userSnap.exists());
+
+    if (!userSnap.exists()) {
       document.body.innerHTML = "<h2>Utente non trovato</h2>";
       return;
     }
 
-    const userDoc = userSnap.docs[0];
-    const user = userDoc.data();
-    const userId = userDoc.id;
+    const user = userSnap.data();
+    console.log("👤 Dati utente:", user);
 
-    // ✅ Riempie dati profilo
+    // Render profilo
     usernameEl.textContent = user.username || "Utente";
     bioEl.textContent = user.bio || "";
     profilePic.src = user.photoURL || "/default-avatar.png";
 
-    // ✅ Carica SOLO foto approvate
+    // 🔹 Query foto
+    console.log("🖼️ Avvio query foto pubbliche...");
+
     const photosQuery = query(
       collection(db, "photos"),
       where("userId", "==", userId),
-      where("status", "==", "Approvata ✅"),
+      where("status", "==", "approved"),
       orderBy("createdAt", "desc"),
       limit(9)
     );
 
     const photosSnap = await getDocs(photosQuery);
+
+    console.log("📸 Numero foto trovate:", photosSnap.size);
+
     photosContainer.innerHTML = "";
 
-    photosSnap.forEach((doc) => {
+    photosSnap.forEach(doc => {
       const photo = doc.data();
+      console.log("🧾 Foto:", photo);
+
       const div = document.createElement("div");
       div.className = "photo-card";
-      div.innerHTML = `<img src="${photo.url}" alt="Foto utente" />`;
+      div.innerHTML = `
+        <img src="${photo.url}" alt="Foto utente" />
+      `;
       photosContainer.appendChild(div);
     });
 
+    console.log("✅ Profilo caricato con successo");
+
   } catch (err) {
-    console.error("Errore profilo:", err);
+    console.error("❌ ERRORE PROFILO:", err);
     document.body.innerHTML = "<h2>Errore caricamento profilo</h2>";
   }
 }
