@@ -3,12 +3,13 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import {
   getFirestore,
   collection,
-  getDocs,
   query,
   orderBy,
+  getDocs,
   doc,
   getDoc,
-  updateDoc
+  updateDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -25,31 +26,50 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const tbody = document.getElementById("photosTbody");
+const photosTableBody = document.getElementById("photosTableBody");
+const statusMsg = document.getElementById("statusMsg");
+const logoutBtn = document.getElementById("logoutBtn");
 
 let usersMap = {};
 
-// -------------------- AUTH STAFF --------------------
+// Logout
+logoutBtn.addEventListener("click", async () => {
+  await signOut(auth);
+  window.location.href = "/login";
+});
+
+// Helper messaggi
+function setStatus(message, type = "info") {
+  if (!statusMsg) return;
+  statusMsg.textContent = message;
+  statusMsg.className = type;
+}
+
+// Auth + check staff
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "/login";
     return;
   }
 
-  const userRef = doc(db, "users", user.uid);
-  const userSnap = await getDoc(userRef);
+  try {
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
 
-  if (!userSnap.exists() || userSnap.data().role !== "staff") {
-    alert("Accesso negato");
-    window.location.href = "/dashboard";
-    return;
+    if (!userSnap.exists() || userSnap.data().role !== "staff") {
+      window.location.href = "/dashboard";
+      return;
+    }
+
+    await loadUsersMap();
+    loadAllPhotos();
+  } catch (err) {
+    console.error("Errore verifica staff:", err);
+    setStatus("Errore verifica permessi", "error");
   }
-
-  await loadUsersMap();
-  loadAllPhotos();
 });
 
-// -------------------- LOAD USERS --------------------
+// Mappa utenti
 async function loadUsersMap() {
   const snap = await getDocs(collection(db, "users"));
   snap.forEach(docSnap => {
@@ -57,61 +77,68 @@ async function loadUsersMap() {
   });
 }
 
-// -------------------- LOAD PHOTOS --------------------
+// Carica tutte le foto
 async function loadAllPhotos() {
   try {
-    const q = query(collection(db, "photos"), orderBy("createdAt", "desc"));
-    const snap = await getDocs(q);
+    setStatus("⏳ Caricamento tutte le foto...");
 
-    if (snap.empty) {
-      tbody.innerHTML = `<tr><td colspan="6">Nessuna foto trovata</td></tr>`;
+    const q = query(
+      collection(db, "photos"),
+      orderBy("createdAt", "desc")
+    );
+
+    const snapshot = await getDocs(q);
+    photosTableBody.innerHTML = "";
+
+    if (snapshot.empty) {
+      setStatus("Nessuna foto trovata");
       return;
     }
 
-    tbody.innerHTML = "";
-
-    snap.forEach((docSnap) => {
-      const p = docSnap.data();
+    snapshot.forEach((docSnap) => {
+      const photo = docSnap.data();
       const id = docSnap.id;
 
       const statusColor =
-        p.status?.includes("Approvata") ? "green" :
-        p.status?.includes("Rifiutata") ? "red" : "orange";
+        photo.status?.includes("Approvata") ? "green" :
+        photo.status?.includes("Rifiutata") ? "red" : "orange";
 
       let linkBox = "-";
 
-      if (p.status?.includes("Approvata")) {
+      if (photo.status?.includes("Approvata")) {
         linkBox = `
           <input
             type="text"
-            placeholder="Link del mezzo..."
+            placeholder="Link mezzo..."
             id="link-${id}"
-            value="${p.vehicleLink || ""}"
-            style="width: 180px; padding: 6px; border-radius:6px;"
-          >
+            value="${photo.vehicleLink || ""}"
+            style="width:140px;padding:6px;border-radius:6px"
+          />
           <button onclick="saveVehicleLink('${id}')">💾</button>
         `;
       }
 
-      tbody.innerHTML += `
-        <tr>
-          <td><img src="${p.url}" class="preview"></td>
-          <td>${p.title || "-"}</td>
-          <td>${usersMap[p.userId] || "Sconosciuto"}</td>
-          <td style="color:${statusColor}">${p.status}</td>
-          <td>${p.createdAt?.toDate().toLocaleString() || "-"}</td>
-          <td>${linkBox}</td>
-        </tr>
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><img src="${photo.url}" class="preview"/></td>
+        <td>${photo.title || "-"}</td>
+        <td>${usersMap[photo.userId] || "Sconosciuto"}</td>
+        <td style="color:${statusColor}">${photo.status}</td>
+        <td>${photo.createdAt?.toDate().toLocaleString() || "-"}</td>
+        <td>${linkBox}</td>
       `;
+
+      photosTableBody.appendChild(tr);
     });
 
+    setStatus(`📸 Totale foto: ${snapshot.size}`);
   } catch (err) {
-    console.error("Errore caricamento foto staff:", err);
-    tbody.innerHTML = `<tr><td colspan="6">Errore caricamento</td></tr>`;
+    console.error("Errore caricamento:", err);
+    setStatus("Errore caricamento foto", "error");
   }
 }
 
-// -------------------- SAVE LINK --------------------
+// ✅ Save link mezzo (senza log per ora)
 window.saveVehicleLink = async (photoId) => {
   const input = document.getElementById(`link-${photoId}`);
   const link = input.value.trim();
@@ -126,16 +153,9 @@ window.saveVehicleLink = async (photoId) => {
       vehicleLink: link
     });
 
-    alert("✅ Link del mezzo salvato!");
+    alert("✅ Link salvato");
   } catch (err) {
-    console.error("Errore salvataggio link:", err);
-    alert("Errore salvataggio link");
+    console.error("Errore salvataggio:", err);
+    alert("Errore salvataggio");
   }
 };
-
-// -------------------- LOGOUT --------------------
-const logoutBtn = document.getElementById("logoutBtn");
-logoutBtn.addEventListener("click", async () => {
-  await signOut(auth);
-  window.location.href = "/login";
-});

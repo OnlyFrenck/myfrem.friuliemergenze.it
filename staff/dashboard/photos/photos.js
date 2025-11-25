@@ -9,7 +9,8 @@ import {
   doc,
   getDoc,
   updateDoc,
-  serverTimestamp
+  serverTimestamp,
+  addDoc
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -32,20 +33,20 @@ const logoutBtn = document.getElementById("logoutBtn");
 
 let usersMap = {};
 
-// ✅ Logout
+// Logout
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "/login";
 });
 
-// ✅ Helper messaggi
+// Helper messaggi
 function setStatus(message, type = "info") {
   if (!statusMsg) return;
   statusMsg.textContent = message;
   statusMsg.className = type;
 }
 
-// 🔐 Verifica auth + ruolo staff
+// Auth + controllo ruolo
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "/login";
@@ -63,14 +64,13 @@ onAuthStateChanged(auth, async (user) => {
 
     await loadUsersMap();
     loadPendingPhotos();
-
   } catch (err) {
     console.error("Errore verifica staff:", err);
     setStatus("Errore verifica permessi", "error");
   }
 });
 
-// ✅ Carica utenti e crea mappa UID -> username
+// Mappa UID -> username
 async function loadUsersMap() {
   const snap = await getDocs(collection(db, "users"));
   snap.forEach(docSnap => {
@@ -78,7 +78,7 @@ async function loadUsersMap() {
   });
 }
 
-// 📷 Carica foto in attesa
+// Carica foto da moderare
 async function loadPendingPhotos() {
   try {
     setStatus("⏳ Caricamento foto...");
@@ -115,27 +115,26 @@ async function loadPendingPhotos() {
       photosTableBody.appendChild(tr);
     });
 
-    document.querySelectorAll(".approve").forEach((btn) => {
+    document.querySelectorAll(".approve").forEach(btn => {
       btn.addEventListener("click", () => {
         updatePhotoStatus(btn.dataset.id, "Approvata ✅");
       });
     });
 
-    document.querySelectorAll(".reject").forEach((btn) => {
+    document.querySelectorAll(".reject").forEach(btn => {
       btn.addEventListener("click", () => {
         updatePhotoStatus(btn.dataset.id, "Rifiutata ❌");
       });
     });
 
     setStatus(`📸 Caricate ${snapshot.size} foto`);
-
   } catch (err) {
     console.error("Errore caricamento foto:", err);
     setStatus("Errore caricamento foto", "error");
   }
 }
 
-// 🔄 Approva / Rifiuta
+// Approva / Rifiuta + LOG staff
 async function updatePhotoStatus(photoId, status) {
   try {
     setStatus("⏳ Aggiornamento...");
@@ -145,9 +144,19 @@ async function updatePhotoStatus(photoId, status) {
       reviewedAt: serverTimestamp()
     });
 
+    const user = auth.currentUser;
+    if (user) {
+      await addDoc(collection(db, "staff_logs"), {
+        staffId: user.uid,
+        staffEmail: user.email || "-",
+        action: status.includes("Approvata") ? "approve_photo" : "reject_photo",
+        photoId: photoId,
+        timestamp: serverTimestamp()
+      });
+    }
+
     setStatus(`✅ Foto ${status}`);
     loadPendingPhotos();
-
   } catch (err) {
     console.error("Errore aggiornamento:", err);
     setStatus("Errore aggiornamento", "error");

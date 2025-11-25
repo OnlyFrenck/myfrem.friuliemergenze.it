@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Logs Staff | MyFrEM - La migliore piattaforma in Friuli-Venezia Giulia nel caricamento foto inerenti l'emergenza</title>
+  <style>
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 10px; border-bottom: 1px solid #ffffff; }
+    th { background: #ffffff; }
+    #statusMsg { margin-top: 10px; color: #aaa; }
+    button { padding: 8px 12px; cursor: pointer; }
+  </style>
+  <link rel="stylesheet" href="/staff/dashboard/staff.css">
+  <link rel="shortcut icon" href="https://friuliemergenze.it/assets/logo.png" type="image/x-icon">
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="https://friuliemergenze.it/assets/logo.png" alt="MyFrEM Logo">
+      <h2>MyFrEM Staff</h2>
+    </div>
+    <nav>
+      <a href="/staff">📊 Dashboard</a>
+      <a href="/staff/dashboard/photos/">🖼️ Moderazione foto</a>
+      <a href="/staff/dashboard/users/">👥 Gestione utenti</a>
+      <a href="/staff/dashboard/logs/" class="active">🗂️ Logs</a>
+      <a href="/staff/dashboard/settings/">⚙️ Impostazioni</a>
+    </nav>
+    <button id="logoutBtn" class="logout">🚪 Logout</button>
+  </aside>
+  <!-- Main content -->
+  <div class="main-content">
+    <h1>📜 Logs Staff</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Azione</th>
+            <th>Foto</th>
+            <th>Staffer</th>
+            <th>Email Staffer</th>
+            <th>Data</th>
+        </tr>
+        </thead>
+        <tbody id="logsTableBody"></tbody>
+    </table>
+
+    <p id="statusMsg"></p>
+  </div> 
+
+  <script type="module" src="/staff/dashboard/logs/logs.js"></script>
+</body>
+</html>
