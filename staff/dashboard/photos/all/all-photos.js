@@ -26,7 +26,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const photosTableBody = document.getElementById("photosTableBody");
+const photosTableBody = document.getElementById("photosTbody");
 const statusMsg = document.getElementById("statusMsg");
 const logoutBtn = document.getElementById("logoutBtn");
 
