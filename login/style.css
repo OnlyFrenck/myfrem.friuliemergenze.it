@@ -179,3 +179,9 @@ a:hover {
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+#messageBox {
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 1rem;
+}

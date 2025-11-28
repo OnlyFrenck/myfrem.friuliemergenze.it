@@ -329,3 +329,49 @@ button.reject:active {
 #activityLog li:last-child {
   border-bottom: none;
 }
+
+.photo-link-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.photo-link-static {
+  color: #4da3ff;
+  text-decoration: underline;
+  cursor: pointer;
+  word-break: break-all;
+  font-size: 12px;
+}
+
+.photo-link-input {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #111;
+  color: #fff;
+  width: 160px;
+  font-size: 12px;
+}
+
+.edit-link-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #aaa;
+  font-size: 14px;
+}
+
+.edit-link-btn:hover {
+  color: #fff;
+}
+
+.hidden {
+  display: none;
+}
+
+#messageBox {
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 1rem;
+}

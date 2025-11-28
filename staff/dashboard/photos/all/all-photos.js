@@ -29,6 +29,7 @@ const db = getFirestore(app);
 const photosTableBody = document.getElementById("photosTbody");
 const statusMsg = document.getElementById("statusMsg");
 const logoutBtn = document.getElementById("logoutBtn");
+const messageBox = document.getElementById("messageBox");
 
 let usersMap = {};
 
@@ -106,15 +107,36 @@ async function loadAllPhotos() {
       let linkBox = "-";
 
       if (photo.status?.includes("Approvata")) {
+
+        const hasLink = photo.vehicleLink && photo.vehicleLink.length > 0;
+
         linkBox = `
-          <input
-            type="text"
-            placeholder="Link mezzo..."
-            id="link-${id}"
-            value="${photo.vehicleLink || ""}"
-            style="width:140px;padding:6px;border-radius:6px"
-          />
-          <button onclick="saveVehicleLink('${id}')">💾</button>
+          <div class="photo-link-box" id="box-${id}">
+
+            <!-- Link cliccabile -->
+            <a
+              href="${hasLink ? photo.vehicleLink : "#"}"
+              target="_blank"
+              id="link-view-${id}"
+              class="photo-link-static ${hasLink ? "" : "hidden"}"
+            >
+              ${hasLink ? photo.vehicleLink : ""}
+            </a>
+
+            <!-- Input nascosto -->
+            <input
+              type="text"
+              id="link-input-${id}"
+              class="photo-link-input ${hasLink ? "hidden" : ""}"
+              placeholder="Inserisci link mezzo..."
+              value="${hasLink ? photo.vehicleLink : ""}"
+            />
+
+            <!-- Pulsanti -->
+            <button class="edit-link-btn" onclick="editLink('${id}')">✏️</button>
+            <button class="edit-link-btn ${hasLink ? "hidden" : ""}" id="save-${id}" onclick="saveVehicleLink('${id}')">💾</button>
+
+          </div>
         `;
       }
 
@@ -144,7 +166,7 @@ window.saveVehicleLink = async (photoId) => {
   const link = input.value.trim();
 
   if (!link) {
-    alert("Inserisci un link valido");
+    messageBox.textContent("Inserisci un link valido");
     return;
   }
 
@@ -153,9 +175,54 @@ window.saveVehicleLink = async (photoId) => {
       vehicleLink: link
     });
 
-    alert("✅ Link salvato");
+    messageBox.textContent("✅ Link salvato");
   } catch (err) {
     console.error("Errore salvataggio:", err);
-    alert("Errore salvataggio");
+    messageBox.textContent("Errore salvataggio");
+  }
+};
+
+// ✏️ Abilita modifica
+window.editLink = (photoId) => {
+  const view = document.getElementById(`link-view-${photoId}`);
+  const input = document.getElementById(`link-input-${photoId}`);
+  const saveBtn = document.getElementById(`save-${photoId}`);
+
+  view.classList.add("hidden");
+  input.classList.remove("hidden");
+  saveBtn.classList.remove("hidden");
+};
+
+// 💾 Salva link
+window.saveVehicleLink = async (photoId) => {
+  const input = document.getElementById(`link-input-${photoId}`);
+  const link = input.value.trim();
+
+  if (!link) {
+    messageBox.textContent("Inserisci un link valido");
+    return;
+  }
+
+  try {
+    await updateDoc(doc(db, "photos", photoId), {
+      vehicleLink: link
+    });
+
+    // Aggiorna UI
+    const view = document.getElementById(`link-view-${photoId}`);
+    const saveBtn = document.getElementById(`save-${photoId}`);
+
+    view.href = link;
+    view.textContent = link;
+    view.classList.remove("hidden");
+
+    input.classList.add("hidden");
+    saveBtn.classList.add("hidden");
+
+    messageBox.textContent("✅ Link salvato");
+
+  } catch (err) {
+    console.error("Errore salvataggio:", err);
+    messageBox.textContent("Errore salvataggio");
   }
 };

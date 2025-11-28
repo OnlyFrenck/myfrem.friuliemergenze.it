@@ -50,7 +50,7 @@ if (loginForm) {
           .get();
 
         if (snap.empty) {
-          alert("❌ Username non trovato");
+          messageBox.textContent("❌ Username non trovato");
           return;
         }
 
@@ -69,7 +69,7 @@ if (loginForm) {
       const userDoc = await db.collection("users").doc(user.uid).get();
 
       if (!userDoc.exists) {
-        alert("Profilo non trovato");
+        messageBox.textContent("Profilo non trovato");
         return;
       }
 
@@ -83,7 +83,7 @@ if (loginForm) {
 
     } catch (err) {
       crr("❌ Errore login:", err);
-      alert("Errore login: " + err.message);
+      messageBox.textContent("Errore login: " + err.message);
     }
   });
 }
@@ -127,7 +127,7 @@ if (googleBtn) {
 
     } catch (err) {
       crr("❌ Errore Google:", err);
-      alert("Errore Google: " + err.message);
+      messageBox.textContent("Errore Google: " + err.message);
     }
   });
 }
@@ -156,7 +156,7 @@ if (registerForm) {
         .get();
 
       if (!existing.empty) {
-        alert("❌ Username già in uso");
+        messageBox.textContent("❌ Username già in uso");
         return;
       }
 
@@ -185,7 +185,7 @@ if (registerForm) {
 
     } catch (err) {
       crr("❌ Errore registrazione:", err);
-      alert("Errore registrazione: " + err.message);
+      messageBox.textContent("Errore registrazione: " + err.message);
     }
   });
 }
@@ -204,10 +204,10 @@ if (resetForm) {
 
     try {
       await auth.sendPasswordResetEmail(email);
-      alert("📩 Email di reset inviata!");
+      messageBox.textContent("📩 Email di reset inviata!");
     } catch (err) {
       crr("❌ Reset error:", err);
-      alert("Errore reset: " + err.message);
+      messageBox.textContent("Errore reset: " + err.message);
     }
   });
 }

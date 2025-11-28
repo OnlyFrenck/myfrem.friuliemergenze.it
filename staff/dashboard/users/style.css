@@ -115,3 +115,9 @@ button:hover {
 button:nth-child(1) { background-color: #10b981; color: #fff; } /* Promuovi */
 button:nth-child(2) { background-color: #f59e0b; color: #fff; } /* Sospendi */
 button:nth-child(3) { background-color: #ef4444; color: #fff; } /* Elimina */
+
+#messageBox {
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 1rem;
+}

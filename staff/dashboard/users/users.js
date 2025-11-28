@@ -40,7 +40,7 @@ onAuthStateChanged(auth, async user => {
   const userData = userDocSnap.data();
 
   if (!userData || userData.role !== "staff") {
-    alert("Accesso negato: solo staff");
+    messageBox.textContent("Accesso negato: solo staff");
     window.location.href = "/login/";
     return;
   }
