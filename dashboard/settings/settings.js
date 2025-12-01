@@ -93,7 +93,7 @@ savePicBtn.addEventListener("click", async () => {
   formData.append("uid", currentUserId);
   formData.append("token", token);
 
-  const upload = await fetch("https://myfrem.friuliemergenze.it/server/upload-profile", {
+  const upload = await fetch("https://myfrem.friuliemergenze.it/server/upload-profile.js", {
     method: "POST",
     body: formData
   });
