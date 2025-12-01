@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Impostazioni utente | MyFrEM</title>
+  <link rel="stylesheet" href="/dashboard/dsh.css">
+  <link rel="shortcut icon" href="https://friuliemergenze.it/assets/logo.png">
+  <style>
+    .sidebar {
+      width: 250px;
+      background: #0073e6;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 97.3vh;
+    }
+  </style>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="https://friuliemergenze.it/assets/logo.png" alt="MyFrEM Logo">
+      <h2>MyFrEM</h2>
+    </div>
+    <nav>
+      <a href="/dashboard">🏠 Home</a>
+      <a href="/dashboard/profile">👤 Profilo</a>
+      <a href="/dashboard/upload">📸 Carica una foto</a>
+      <a href="/dashboard/all-photos">📸 Le mie foto</a>
+      <a href="/dashboard/settings/" class="active">⚙️ Impostazioni</a>
+      <p></p>
+      <a href="/dashboard/contact/">📞 Contattaci</a>
+    </nav>
+    <button id="logoutBtn" class="logout">🚪 Logout</button>
+  </aside>
+
+  <div class="main-content">
+    <div class="settings-container">
+        <h1 class="title">Impostazioni account</h1>
+
+        <!-- PROFILE PICTURE -->
+        <section class="settings-card">
+        <h2>Immagine profilo</h2>
+        <div class="profile-pic-box">
+            <img id="profilePicPreview" class="profile-pic">
+            <input type="file" id="profilePicInput" accept="image/*">
+        </div>
+        <button id="savePicBtn" class="btn">Salva immagine</button>
+        </section>
+
+        <!-- USERNAME -->
+        <section class="settings-card">
+        <h2>Username</h2>
+        <p id="username">Il tuo username è
+            <span id="userText"></span>
+        </p>
+        <input type="text" id="usernameInput" class="input">
+        <button id="saveUsernameBtn" class="btn">Salva username</button>
+        </section>
+
+        <!-- BIO -->
+        <section class="settings-card">
+        <h2>Biografia</h2>
+        <textarea id="bioInput" class="textarea"></textarea>
+        <button id="saveBioBtn" class="btn">Salva bio</button>
+        </section>
+
+        <!-- PASSWORD -->
+        <section class="settings-card" id="passwordCard" style="display:none;">
+        <h2>Cambia password</h2>
+        <input type="password" id="newPassword" placeholder="Nuova password" class="input">
+        <button id="savePasswordBtn" class="btn">Aggiorna password</button>
+        </section>
+
+        <!-- LOGOUT -->
+        <section class="settings-card">
+        <h2>Disconnessione</h2>
+        <button id="logoutBtn" class="btn danger">Esci</button>
+        </section>
+
+    </div>
+  </div>
+
+  <script type="module" src="/dashboard/settings/settings.js"></script>
+</body>
+</html>
