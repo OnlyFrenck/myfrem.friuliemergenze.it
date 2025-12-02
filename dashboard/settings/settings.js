@@ -30,9 +30,6 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 // DOM
-const profilePicPreview = document.getElementById("profilePicPreview");
-const profilePicInput = document.getElementById("profilePicInput");
-const savePicBtn = document.getElementById("savePicBtn");
 
 const usernameInput = document.getElementById("usernameInput");
 const userText = document.getElementById("userText");
@@ -68,53 +65,9 @@ async function loadUserData(uid) {
 
   const data = snap.data();
 
-  profilePicPreview.src = data.photoURL || "/assets/profile/default-avatar.jpg";
   userText.innerHTML = `<b>${data.username}</b>` || "";
   bioInput.value = data.bio || "";
 }
-
-// 📸 PREVIEW IMMAGINE
-profilePicInput.addEventListener("change", () => {
-  const file = profilePicInput.files[0];
-  if (file) {
-    profilePicPreview.src = URL.createObjectURL(file);
-  }
-});
-
-// 📤 UPLOAD IMMAGINE AL SERVER NODE.JS
-savePicBtn.addEventListener("click", async () => {
-  const file = profilePicInput.files[0];
-  if (!file) return alert("Seleziona un'immagine!");
-
-  const token = await currentUser.getIdToken();
-
-  const formData = new FormData();
-  formData.append("image", file);
-  formData.append("uid", currentUserId);
-  formData.append("token", token);
-
-  const upload = await fetch("https://myfrem.friuliemergenze.it/server/upload-profile", {
-    method: "POST",
-    body: formData
-  });
-
-  const result = await upload.json();
-
-  if (!result.success) {
-    alert("Errore upload immagine: " + (result.error || ""));
-    return;
-  }
-
-  // URL immagine
-  const imageURL = result.url;
-
-  // Salvo nel Firestore
-  await updateDoc(doc(db, "users", currentUserId), {
-    photoURL: imageURL
-  });
-
-  alert("Immagine aggiornata!");
-});
 
 // 📝 SALVA USERNAME
 saveUsernameBtn.addEventListener("click", async () => {
