@@ -259,3 +259,121 @@ body.dark-mode {
 .info { color: #3498db; }
 .success { color: #2ecc71; }
 .error { color: #e74c3c; }
+
+/* ------------------------------------------------ */
+/*                 RESPONSIVE DESIGN                */
+/* ------------------------------------------------ */
+
+/* Tablet: < 992px */
+@media (max-width: 992px) {
+  .sidebar {
+    width: 200px;
+    padding: 15px;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .main-content h1 {
+    font-size: 24px;
+  }
+
+  .settings-section {
+    padding: 18px;
+  }
+
+  .profile-box img {
+    width: 70px;
+    height: 70px;
+  }
+}
+
+/* Mobile: < 768px */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  /* Sidebar diventa un menu in alto */
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 12px;
+    gap: 15px;
+  }
+
+  .sidebar nav {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .sidebar nav a {
+    white-space: nowrap;
+    padding: 10px 14px;
+    margin-bottom: 0;
+  }
+
+  .sidebar .logo {
+    display: none;
+  }
+
+  .sidebar .logout {
+    display: none; /* Opzionale: mantiene pulita la navbar mobile */
+  }
+
+  /* Contenuto */
+  .main-content {
+    padding: 18px;
+  }
+
+  .settings-section {
+    padding: 16px;
+  }
+
+  .settings-section h2 {
+    font-size: 18px;
+  }
+
+  .profile-box {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-box img {
+    width: 70px;
+    height: 70px;
+  }
+}
+
+/* Mobile piccolo: < 480px */
+@media (max-width: 480px) {
+  .main-content h1 {
+    font-size: 20px;
+  }
+
+  .settings-section {
+    padding: 14px;
+  }
+
+  .settings-section h2 {
+    font-size: 17px;
+  }
+
+  .settings-section button {
+    width: 100%;
+    margin-top: 6px;
+  }
+
+  .small-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  input,
+  select {
+    font-size: 14px;
+  }
+}

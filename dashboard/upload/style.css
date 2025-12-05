@@ -279,3 +279,113 @@ form input[type="file"] {
   color: #444;
   font-style: italic;
 }
+
+/* -------------------------------
+   RESPONSIVE PROFILE / DASHBOARD
+   ------------------------------- */
+
+/* Tablet: max-width 992px */
+@media (max-width: 992px) {
+  .sidebar {
+    width: 200px;
+    padding: 0.8rem;
+  }
+
+  .sidebar .logo img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .main-content {
+    margin-left: 200px;
+    padding: 15px;
+  }
+
+  form {
+    max-width: 350px;
+    padding: 20px;
+  }
+
+  #btn-upl, #saveBtn {
+    font-size: 15px;
+    padding: 10px 20px;
+  }
+}
+
+/* Mobile: max-width 768px */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .sidebar nav {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .sidebar .logo {
+    display: none;
+  }
+
+  .sidebar .logout {
+    display: none;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 15px;
+  }
+
+  form {
+    width: 100%;
+    max-width: 100%;
+    padding: 18px;
+  }
+
+  #btn-upl, #saveBtn {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+}
+
+/* Extra small: max-width 480px */
+@media (max-width: 480px) {
+  .main-content {
+    padding: 10px;
+  }
+
+  form {
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  form label {
+    font-size: 0.9rem;
+  }
+
+  form input, form textarea {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+
+  #btn-upl, #saveBtn {
+    font-size: 13px;
+    padding: 9px 12px;
+  }
+
+  #file-name {
+    font-size: 13px;
+  }
+}

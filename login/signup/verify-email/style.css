@@ -59,3 +59,91 @@ a {
   color: #9ecfff;
   text-decoration: none;
 }
+
+/* -------------------------------
+   RESPONSIVE CARD
+   ------------------------------- */
+
+/* Tablet: max-width 992px */
+@media (max-width: 992px) {
+  .card {
+    padding: 30px;
+    max-width: 350px;
+  }
+
+  .card img {
+    width: 60px;
+    margin-bottom: 15px;
+  }
+
+  .card h1 {
+    font-size: 1.6rem;
+  }
+
+  .card p {
+    font-size: 0.95rem;
+  }
+
+  button {
+    padding: 12px;
+    font-size: 15px;
+  }
+}
+
+/* Mobile: max-width 768px */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+    height: auto;
+  }
+
+  .card {
+    padding: 25px;
+    max-width: 300px;
+  }
+
+  .card img {
+    width: 50px;
+    margin-bottom: 12px;
+  }
+
+  .card h1 {
+    font-size: 1.4rem;
+  }
+
+  .card p {
+    font-size: 0.9rem;
+  }
+
+  button {
+    padding: 10px;
+    font-size: 14px;
+  }
+}
+
+/* Extra small: max-width 480px */
+@media (max-width: 480px) {
+  .card {
+    padding: 20px;
+    border-radius: 16px;
+    max-width: 100%;
+  }
+
+  .card img {
+    width: 45px;
+    margin-bottom: 10px;
+  }
+
+  .card h1 {
+    font-size: 1.3rem;
+  }
+
+  .card p {
+    font-size: 0.85rem;
+  }
+
+  button {
+    padding: 9px;
+    font-size: 13px;
+  }
+}

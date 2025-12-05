@@ -20,7 +20,7 @@ a {
 
 .btn {
   display: inline-block;
-  background: #0057b7; /* blu principale */
+  background: #0057b7;
   color: #fff;
   padding: 12px 24px;
   border-radius: 6px;
@@ -112,7 +112,6 @@ section p {
 }
 
 /* CHI SIAMO */
-/* --- Sezione Chi siamo --- */
 .team {
   background: #f9f9f9;
   padding: 4rem 2rem;
@@ -140,7 +139,6 @@ section p {
   margin-top: 1.5rem;
   font-weight: 600;
   color: #0073e6;
-  text-decoration: none;
   border: 2px solid #0073e6;
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
@@ -179,7 +177,6 @@ section p {
   font-size: 1.2rem;
   font-weight: bold;
   border-radius: 50px;
-  text-decoration: none;
   box-shadow: 0 4px 15px rgba(0, 115, 230, 0.3);
   transition: all 0.3s ease;
 }
@@ -206,15 +203,74 @@ footer a:hover {
   text-decoration: underline;
 }
 
-/* Responsive */
+/* ------------------------ */
+/*       RESPONSIVE        */
+/* ------------------------ */
+
+/* Tablet */
+@media (max-width: 992px) {
+  .hero {
+    padding: 80px 20px;
+  }
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+  section {
+    padding: 50px 20px;
+  }
+}
+
+/* Mobile */
 @media (max-width: 768px) {
+  .hero {
+    padding: 60px 20px;
+  }
   .hero h1 {
     font-size: 2.2rem;
   }
   .hero .subtitle {
     font-size: 1rem;
   }
+  .hero .actions .btn {
+    display: block;
+    margin: 10px auto;
+    width: 80%;
+  }
+
   section h2 {
     font-size: 1.6rem;
+  }
+  section p {
+    font-size: 1rem;
+  }
+
+  .cta h2 {
+    font-size: 1.6rem;
+  }
+  .cta-btn {
+    width: 80%;
+    padding: 0.9rem 1.8rem;
+    font-size: 1.1rem;
+  }
+
+  footer {
+    font-size: 0.9rem;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 1.9rem;
+  }
+  .hero .subtitle {
+    font-size: 0.95rem;
+  }
+  .btn.big {
+    font-size: 1rem;
+    padding: 14px 24px;
+  }
+  .team h2 {
+    font-size: 1.8rem;
   }
 }

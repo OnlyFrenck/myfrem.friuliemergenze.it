@@ -185,3 +185,124 @@ a:hover {
   font-weight: bold;
   font-size: 1rem;
 }
+
+/* -------------------------------
+   RESPONSIVE LOGIN / FORM
+   ------------------------------- */
+
+/* Tablet: max-width 992px */
+@media (max-width: 992px) {
+  .container {
+    width: 300px;
+    padding: 1.8rem;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  h2 {
+    font-size: 0.95rem;
+  }
+
+  input, button {
+    padding: 0.7rem;
+    font-size: 0.95rem;
+  }
+
+  .social-login-btn {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Mobile: max-width 768px */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+    height: auto;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 320px;
+    padding: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 0.9rem;
+  }
+
+  h5 {
+    font-size: 0.8rem;
+  }
+
+  input, button {
+    font-size: 0.9rem;
+    padding: 0.65rem;
+  }
+
+  .password-field input {
+    padding-right: 1.8rem;
+  }
+
+  .toggle-password {
+    font-size: 1rem;
+  }
+
+  .social-login-btn {
+    font-size: 0.85rem;
+    padding: 10px;
+  }
+
+  .google-btn {
+    font-size: 0.85rem;
+    padding: 10px;
+  }
+
+  .note,
+  .ac-login {
+    font-size: 0.8rem;
+  }
+}
+
+/* Extra small: max-width 480px */
+@media (max-width: 480px) {
+  .container {
+    width: 100%;
+    padding: 1.2rem;
+    border-radius: 12px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  h2 {
+    font-size: 0.85rem;
+  }
+
+  input, button {
+    font-size: 0.85rem;
+    padding: 0.6rem;
+  }
+
+  .toggle-password {
+    font-size: 0.9rem;
+  }
+
+  .social-login-btn,
+  .google-btn {
+    font-size: 0.8rem;
+    padding: 8px;
+  }
+
+  .note,
+  .ac-login {
+    font-size: 0.75rem;
+  }
+}
