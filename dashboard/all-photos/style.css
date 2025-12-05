@@ -203,13 +203,14 @@ form button:hover {
 /* Tablet: max-width 992px */
 @media (max-width: 992px) {
   .main-content {
-    margin-left: 200px; /* sidebar ridotta */
+    margin-left: 200px; /* sidebar più stretta */
     padding: 30px 20px;
   }
 
   .photo-card {
-    width: 45%;
+    width: 48%;
     margin-right: 10px;
+    margin-bottom: 15px;
   }
 
   form {
@@ -220,6 +221,10 @@ form button:hover {
 
 /* Mobile: max-width 768px */
 @media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
   .sidebar {
     width: 100%;
     flex-direction: row;
