@@ -166,7 +166,7 @@ window.saveVehicleLink = async (photoId) => {
   const link = input.value.trim();
 
   if (!link) {
-    messageBox.textContent("Inserisci un link valido");
+    alert("Inserisci un link valido");
     return;
   }
 
@@ -175,10 +175,10 @@ window.saveVehicleLink = async (photoId) => {
       vehicleLink: link
     });
 
-    messageBox.textContent("✅ Link salvato");
+    alert("✅ Link salvato");
   } catch (err) {
     console.error("Errore salvataggio:", err);
-    messageBox.textContent("Errore salvataggio");
+    alert("Errore salvataggio");
   }
 };
 
@@ -199,7 +199,7 @@ window.saveVehicleLink = async (photoId) => {
   const link = input.value.trim();
 
   if (!link) {
-    messageBox.textContent("Inserisci un link valido");
+    alert("Inserisci un link valido");
     return;
   }
 
@@ -219,10 +219,10 @@ window.saveVehicleLink = async (photoId) => {
     input.classList.add("hidden");
     saveBtn.classList.add("hidden");
 
-    messageBox.textContent("✅ Link salvato");
+    alert("✅ Link salvato");
 
   } catch (err) {
     console.error("Errore salvataggio:", err);
-    messageBox.textContent("Errore salvataggio");
+    alert("Errore salvataggio");
   }
 };

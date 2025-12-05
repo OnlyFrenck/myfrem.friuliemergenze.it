@@ -40,7 +40,7 @@ onAuthStateChanged(auth, async user => {
   const userData = userDocSnap.data();
 
   if (!userData || userData.role !== "staff") {
-    messageBox.textContent("Accesso negato: solo staff");
+    alert("Accesso negato: solo staff");
     window.location.href = "/login/";
     return;
   }
@@ -56,15 +56,17 @@ async function loadUsers() {
     const u = docSnap.data();
     const tr = document.createElement("tr");
 
+    if (!u) return;
+
     tr.innerHTML = `
       <td>${u.name || ""}</td>
       <td>${u.email || ""}</td>
       <td>${u.username || ""}</td>
-      <td>${u.role || "user"}</td>
-      <td>${u.status || "attivo"}</td>
+      <td>${u.role || "Stato utente non disponibile."}</td>
+      <td>${u.status || "Status utente non disponibile."}</td>
       <td>
         <button class="promote">Promuovi</button>
-        <button class="suspend">Sospendi</button>
+        <button class="suspend">Sospendi/Riattiva</button>
         <button class="delete">Elimina</button>
       </td>
     `;
@@ -92,7 +94,15 @@ async function updateStatus(userId, currentStatus) {
 
 async function deleteUser(userId) {
   if (confirm("Sei sicuro di voler eliminare questo utente?")) {
-    await deleteDoc(doc(db, "users", userId));
+    await updateDoc(doc(db, "users", userId), { status: "eliminato" });
     loadUsers();
+    setTimeout(async () => {
+      const userDocRef = doc(db, "users", userId);
+      const userDocSnap = await getDoc(userDocRef);
+      const userData = userDocSnap.data();
+      if (userData && userData.status === "eliminato") {
+        await deleteDoc(doc(db, "users", userId));
+      } 
+    }, 60 * 24 * 60 * 60 * 1000);
   }
 }

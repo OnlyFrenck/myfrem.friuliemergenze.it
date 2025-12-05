@@ -30,6 +30,10 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 // DOM
+const nameInput = document.getElementById("nameInput");
+const surnameInput = document.getElementById("surnameInput");
+const fullNameText = document.getElementById("fullNameText");
+const saveFullNameBtn = document.getElementById("saveFullNameBtn");
 
 const usernameInput = document.getElementById("usernameInput");
 const userText = document.getElementById("userText");
@@ -65,9 +69,25 @@ async function loadUserData(uid) {
 
   const data = snap.data();
 
+  fullNameText.innerHTML = `<b>${data.name} ${data.surname}</b>` || "";
   userText.innerHTML = `<b>${data.username}</b>` || "";
   bioInput.value = data.bio || "";
 }
+
+// 📝 SALVA NOME E COGNOME
+saveFullNameBtn.addEventListener("click", async () => {
+  const newName = nameInput.value.trim();
+  const newSurname = surnameInput.value.trim();
+  if (newName.length < 3) return alert("Minimo 3 caratteri!");
+  if (newSurname.length < 3) return alert("Minimo 3 caratteri!");
+
+  await updateDoc(doc(db, "users", currentUserId), {
+    name: newName,
+    surname: newSurname,
+  });
+
+  alert("Nome e cognome aggiornati!");
+});
 
 // 📝 SALVA USERNAME
 saveUsernameBtn.addEventListener("click", async () => {

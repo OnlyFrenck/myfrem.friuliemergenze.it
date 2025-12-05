@@ -50,7 +50,7 @@ if (loginForm) {
           .get();
 
         if (snap.empty) {
-          messageBox.textContent("❌ Username non trovato");
+          alert("❌ Username non trovato");
           return;
         }
 
@@ -61,7 +61,8 @@ if (loginForm) {
       const cred = await auth.signInWithEmailAndPassword(emailToUse, password);
       const user = cred.user;
 
-      clg("✅ Login riuscito:", user.uid);
+      clg("✅ Login riuscito:", user.username || user.email);
+      clg("🔑 Stato account:", user.status);
 
       const token = await user.getIdToken();
       localStorage.setItem("userToken", token);
@@ -69,7 +70,7 @@ if (loginForm) {
       const userDoc = await db.collection("users").doc(user.uid).get();
 
       if (!userDoc.exists) {
-        messageBox.textContent("Profilo non trovato");
+        alert("Profilo non trovato");
         return;
       }
 
@@ -81,9 +82,25 @@ if (loginForm) {
         window.location.href = "/dashboard";
       }
 
+      if (userData.status === "sospeso") {
+        alert("❌ Il tuo account è sospeso. Contatta un amministratore.");
+        await auth.signOut();
+        return;
+      }
+
+      if (userData.status === "eliminato") {
+        alert("❌ Il tuo account è stato eliminato. E' possibile riattivarlo entro 60 giorni dall'eliminazione contattando un amministratore.");
+        await auth.signOut();
+        return;
+      }
+
+      if (userData.emailVerified === "false") {
+        alert("⚠️ Attenzione: email non verificata. Verifica la tua email per accedere.");
+      }
+
     } catch (err) {
       crr("❌ Errore login:", err);
-      messageBox.textContent("Errore login: " + err.message);
+      alert("Errore login: " + err.message);
     }
   });
 }
@@ -127,7 +144,7 @@ if (googleBtn) {
 
     } catch (err) {
       crr("❌ Errore Google:", err);
-      messageBox.textContent("Errore Google: " + err.message);
+      alert("Errore Google: " + err.message);
     }
   });
 }
@@ -156,7 +173,7 @@ if (registerForm) {
         .get();
 
       if (!existing.empty) {
-        messageBox.textContent("❌ Username già in uso");
+        alert("❌ Username già in uso");
         return;
       }
 
@@ -175,6 +192,7 @@ if (registerForm) {
         surname,
         username,
         role: "user",
+        status: "attivo",
         emailVerified: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
@@ -185,7 +203,7 @@ if (registerForm) {
 
     } catch (err) {
       crr("❌ Errore registrazione:", err);
-      messageBox.textContent("Errore registrazione: " + err.message);
+      alert("Errore registrazione: " + err.message);
     }
   });
 }
@@ -204,10 +222,10 @@ if (resetForm) {
 
     try {
       await auth.sendPasswordResetEmail(email);
-      messageBox.textContent("📩 Email di reset inviata!");
+      alert("📩 Email di reset inviata!");
     } catch (err) {
       crr("❌ Reset error:", err);
-      messageBox.textContent("Errore reset: " + err.message);
+      alert("Errore reset: " + err.message);
     }
   });
 }

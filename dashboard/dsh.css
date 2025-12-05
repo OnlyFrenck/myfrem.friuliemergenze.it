@@ -161,6 +161,11 @@ body {
   color: #0073e6;
 }
 
+.settings-card h3 {
+  margin-top: 0;
+  color: #0073e6;
+}
+
 /* Input */
 .input, .textarea {
   width: 97%;

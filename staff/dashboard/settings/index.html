@@ -3,18 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Impostazioni Staff | Dashboard Staff - La migliore piattaforma in Friuli-Venezia Giulia nel caricamento foto inerenti l'emergenza</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <title>Impostazioni Staff | MyFrEM - La migliore piattaforma in Friuli-Venezia Giulia nel caricamento foto inerenti l'emergenza</title>
   <link rel="stylesheet" href="/staff/dashboard/settings/style.css">
-  <link rel="shortcut icon" href="https://friuliemergenze.it/assets/logo.png" type="image/x-icon">
+  <link rel="shortcut icon" href="https://friuliemergenze.it/assets/logo.png">
   <script type="module" src="/staff/dashboard/settings/staff-settings.js"></script>
-  <script type="module" src="/staff/dashboard/settings/mail-stg.js"></script>
+  <script type="module" src="/staff/dashboard/settings/2fa-stg.js"></script>
 </head>
+
 <body>
+
+  <!-- ===== SIDEBAR ===== -->
   <aside class="sidebar">
     <div class="logo">
-      <img src="https://friuliemergenze.it/assets/logo.png" alt="MyFrEM Logo">
+      <img src="https://friuliemergenze.it/assets/logo.png" alt="Logo MyFrEM">
       <h2>MyFrEM Staff</h2>
     </div>
+
     <nav>
       <a href="/staff">📊 Dashboard</a>
       <a href="/staff/dashboard/photos/">🖼️ Moderazione foto</a>
@@ -22,40 +27,96 @@
       <a href="/staff/dashboard/logs/">🗂️ Logs</a>
       <a href="/staff/dashboard/settings/" class="active">⚙️ Impostazioni</a>
     </nav>
+
     <button id="logoutBtn" class="logout">🚪 Logout</button>
   </aside>
 
-  <div class="main-content">
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+
     <h1>⚙️ Impostazioni Staff</h1>
 
-    <div class="settings-section">
-      <h2>Cambia Password</h2>
+    <!-- ===== PROFILO STAFF ===== -->
+    <section class="settings-section">
+      <h2>👤 Profilo Staff</h2>
+
+      <div class="profile-box">
+        <div>
+          <p><strong>Nome utente:</strong> <span id="staffUsername"></span></p>
+          <p>-</p>
+          <p><strong>Nome staffer:</strong> <span id="staffName"></span></p>
+          <p>-</p>
+          <p><strong>Email:</strong> <span id="staffEmail"></span></p>
+          <p>-</p>
+          <p><strong>Ruolo:</strong> <span id="staffRole"></span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CAMBIA PASSWORD ===== -->
+    <section class="settings-section">
+      <h2>🔐 Cambia Password</h2>
       <form id="changePasswordForm">
-        <label for="currentPassword">Password attuale</label>
+        <label>Password attuale</label>
         <input type="password" id="currentPassword" required>
 
-        <label for="newPassword">Nuova password</label>
+        <label>Nuova password</label>
         <input type="password" id="newPassword" required>
 
-        <label for="confirmPassword">Conferma nuova password</label>
+        <label>Conferma nuova password</label>
         <input type="password" id="confirmPassword" required>
 
         <button type="submit">💾 Cambia password</button>
       </form>
       <p id="passwordStatusMsg"></p>
-    </div>
+    </section>
 
-    <div class="settings-section">
-      <h2>Preferenze Staff</h2>
+    <!-- ===== SICUREZZA AVANZATA ===== -->
+    <section class="settings-section">
+      <h2>🛡️ Sicurezza Avanzata</h2>
+
+      <div class="security-item">
+        <h3>Autenticazione a due fattori (2FA)</h3>
+        <p>Proteggi il tuo account usando il telefono.</p>
+        <input type="text" id="phoneNumber" class="disabled" placeholder="+39 3xx xxx xxxx" disabled>
+        <button id="sendCodeBtn" class="disabled" disabled>In arrivo</button>
+        <button id="sendCodeBtn" style="display:none;">📩 Invia codice</button>
+
+        <div id="verificationSection" style="display:none; margin-top:10px;">
+          <input type="text" id="verificationCode" placeholder="Inserisci codice ricevuto">
+          <button id="verifyCodeBtn">✅ Verifica codice</button>
+        </div>
+
+        <p id="twoFaStatusMsg"></p>
+      </div>
+    </section>
+
+    <!-- ===== PREFERENZE STAFF ===== -->
+    <section class="settings-section">
+      <h2>⚙️ Preferenze Staff</h2>
       <form id="preferencesForm">
-        <label>
-          <input type="checkbox" id="emailNotifications">
-          Ricevi notifiche via email
+        <label class="checkbox">
+          <input type="checkbox" id="emailNotifications"> Notifiche via email
         </label>
+
+        <label class="checkbox">
+          <input type="checkbox" id="darkModeToggle"> Tema scuro
+        </label>
+
         <button type="submit">💾 Salva preferenze</button>
-        </form>
-        <p id="preferencesStatusMsg"></p>
-    </div>
-  </div>
+      </form>
+      <p id="preferencesStatusMsg"></p>
+    </section>
+
+    <!-- ===== SISTEMA ===== -->
+    <section class="settings-section">
+      <h2>🖥️ Sistema</h2>
+
+      <button id="clearCacheBtn" class="danger-btn">🧹 Svuota cache locale</button>
+      <button id="resetLayoutBtn" class="danger-btn">♻️ Reimposta layout dashboard</button>
+    </section>
+
+  </main>
+
 </body>
 </html>

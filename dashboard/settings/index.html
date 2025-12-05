@@ -29,7 +29,6 @@
     </div>
     <nav>
       <a href="/dashboard">🏠 Home</a>
-      <a href="/dashboard/profile">👤 Profilo</a>
       <a href="/dashboard/upload">📸 Carica una foto</a>
       <a href="/dashboard/all-photos">📸 Le mie foto</a>
       <a href="/dashboard/settings/" class="active">⚙️ Impostazioni</a>
@@ -39,9 +38,23 @@
     <button id="logoutBtn" class="logout">🚪 Logout</button>
   </aside>
 
-  <div class="main-content">
+  <div class="main-content" style="max-width: 1800px;">
     <div class="settings-container">
         <h1 class="title">Impostazioni account</h1>
+
+        <!-- NOME E COGNOME -->
+        <section class="settings-card">
+          <h2>Nome e cognome</h2>
+          <p id="fullName">Il tuo attuale nome e cognome è
+            <span id="fullNameText"></span>
+          </p>
+          <p></p>
+          <h3>Nome</h3>
+          <input type="text" id="nameInput" class="input" placeholder="Nome">
+          <h3>Cognome</h3>
+          <input type="text" id="surnameInput" class="input" placeholder="Cognome">
+          <button id="saveFullNameBtn" class="btn">Salva nome e cognome</button>
+        </section>
 
         <!-- USERNAME -->
         <section class="settings-card">

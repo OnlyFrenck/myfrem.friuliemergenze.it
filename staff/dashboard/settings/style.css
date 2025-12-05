@@ -6,20 +6,55 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
+  font-family: "Inter", Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   display: flex;
+  min-height: 100vh;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
-/* Sidebar */
+/* ------------------------------------------------ */
+/*                    VARIABILI                     */
+/* ------------------------------------------------ */
+:root {
+  --bg-color: #f5f5f5;
+  --text-color: #222;
+  --sidebar-bg: #222;
+  --sidebar-text: #fff;
+  --card-bg: #fff;
+
+  --button-bg: #2ecc71;
+  --button-hover: #27ae60;
+  --danger-bg: #e74c3c;
+  --danger-hover: #c0392b;
+
+  --border-color: #ccc;
+  --shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode {
+  --bg-color: #121212;
+  --text-color: #eee;
+  --sidebar-bg: #1e1e1e;
+  --sidebar-text: #fff;
+  --card-bg: #1a1a1a;
+
+  --border-color: #333;
+  --shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* ------------------------------------------------ */
+/*                      SIDEBAR                     */
+/* ------------------------------------------------ */
 .sidebar {
   width: 250px;
-  background-color: #222;
-  color: #fff;
-  height: 100vh; /* copre tutto lo spazio verticale */
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text);
   display: flex;
   flex-direction: column;
   padding: 20px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
 }
 
 .sidebar .logo {
@@ -30,17 +65,20 @@ body {
 }
 
 .sidebar .logo img {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
+  border-radius: 8px;
 }
 
 .sidebar nav a {
   display: block;
-  color: #fff;
+  color: var(--sidebar-text);
   text-decoration: none;
-  padding: 10px 0;
-  margin-bottom: 5px;
-  border-radius: 4px;
+  padding: 12px 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+  font-size: 15px;
 }
 
 .sidebar nav a.active,
@@ -50,114 +88,174 @@ body {
 
 .sidebar .logout {
   margin-top: auto;
-  padding: 10px;
-  background-color: #e74c3c;
+  padding: 12px;
+  background-color: var(--danger-bg);
   color: #fff;
   border: none;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
 }
 
-/* Main content */
+.sidebar .logout:hover {
+  background-color: var(--danger-hover);
+}
+
+/* ------------------------------------------------ */
+/*                 MAIN CONTENT                     */
+/* ------------------------------------------------ */
 .main-content {
   flex: 1;
   padding: 30px;
 }
 
 .main-content h1 {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  font-size: 28px;
 }
 
+/* ------------------------------------------------ */
+/*                  CARDS / SECTIONS                */
+/* ------------------------------------------------ */
 .settings-section {
-  background-color: #fff;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  background-color: var(--card-bg);
+  padding: 22px;
+  margin-bottom: 22px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
 }
 
 .settings-section h2 {
   margin-bottom: 15px;
+  font-size: 21px;
 }
 
+/* ------------------------------------------------ */
+/*                      FORM                        */
+/* ------------------------------------------------ */
 .settings-section label {
   display: block;
   margin-bottom: 8px;
+  font-weight: 600;
 }
 
 .settings-section input[type="text"],
 .settings-section input[type="password"],
-.settings-section input[type="email"] {
+.settings-section input[type="email"],
+.settings-section select {
   width: 100%;
-  padding: 8px;
-  margin-bottom: 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.settings-section button {
-  padding: 10px 15px;
-  border: none;
-  background-color: #2ecc71;
-  color: #fff;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.settings-section button:hover {
-  background-color: #27ae60;
-}
-
-#statusMsg {
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-#statusMsg.info { color: #3498db; }
-#statusMsg.success { color: #2ecc71; }
-#statusMsg.error { color: #e74c3c; }
-
-:root {
-  --bg-color: #f5f5f5;
-  --text-color: #222;
-  --sidebar-bg: #222;
-  --sidebar-text: #fff;
-  --button-bg: #2ecc71;
-  --button-hover: #27ae60;
-}
-
-body.light-mode {
-  --bg-color: #f5f5f5;
-  --text-color: #222;
-  --sidebar-bg: #222;
-  --sidebar-text: #fff;
-  --button-bg: #2ecc71;
-  --button-hover: #27ae60;
-}
-
-body.dark-mode {
-  --bg-color: #121212;
-  --text-color: #eee;
-  --sidebar-bg: #1e1e1e;
-  --sidebar-text: #fff;
-  --button-bg: #27ae60;
-  --button-hover: #2ecc71;
-}
-
-body {
+  padding: 10px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
   background-color: var(--bg-color);
   color: var(--text-color);
 }
 
-.sidebar {
-  background-color: var(--sidebar-bg);
-  color: var(--sidebar-text);
-}
-
 .settings-section button {
+  padding: 10px 16px;
+  border: none;
   background-color: var(--button-bg);
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .settings-section button:hover {
   background-color: var(--button-hover);
 }
+
+.settings-section button:active {
+  transform: scale(0.96);
+}
+
+/* piccoli */
+.small-btn {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 5px;
+  background-color: #3498db;
+}
+
+.small-btn:hover {
+  background-color: #2980b9;
+}
+
+/* disabled */
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* danger buttons */
+.danger-btn {
+  background-color: var(--danger-bg);
+  margin-right: 10px;
+}
+
+.danger-btn:hover {
+  background-color: var(--danger-hover);
+}
+
+/* ------------------------------------------------ */
+/*                 PROFILO STAFF BOX                */
+/* ------------------------------------------------ */
+.profile-box {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.profile-box img {
+  width: 80px;
+  height: 80px;
+  border-radius: 100px;
+  object-fit: cover;
+  border: 3px solid var(--border-color);
+}
+
+.role {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* ------------------------------------------------ */
+/*                SICUREZZA AVANZATA                */
+/* ------------------------------------------------ */
+.security-item {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.security-item h3 {
+  font-size: 17px;
+  margin-bottom: 5px;
+}
+
+/* ------------------------------------------------ */
+/*                  SWITCH CHECKBOX                 */
+/* ------------------------------------------------ */
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* ------------------------------------------------ */
+/*                  STATUS MESSAGES                 */
+/* ------------------------------------------------ */
+#statusMsg,
+#passwordStatusMsg,
+#preferencesStatusMsg {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.info { color: #3498db; }
+.success { color: #2ecc71; }
+.error { color: #e74c3c; }

@@ -1,6 +1,8 @@
 import { getAuth, updatePassword } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
+// ==================== CONFIG FIREBASE ====================
 const firebaseConfig = {
   apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
   authDomain: "friuli-emergenze.firebaseapp.com",
@@ -13,18 +15,63 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-// Logout
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  auth.signOut().then(() => window.location.href = "/login/");
-});
+// ==================== DOM ====================
+const logoutBtn = document.getElementById("logoutBtn");
 
-// Cambio password
+const staffUsername = document.getElementById("staffUsername");
+const staffName = document.getElementById("staffName");
+const staffEmail = document.getElementById("staffEmail");
+const staffRole = document.getElementById("staffRole");
+
 const changePasswordForm = document.getElementById("changePasswordForm");
 const passwordStatusMsg = document.getElementById("passwordStatusMsg");
 
-changePasswordForm.addEventListener("submit", async e => {
+const preferencesForm = document.getElementById("preferencesForm");
+const preferencesStatusMsg = document.getElementById("preferencesStatusMsg");
+
+const emailNotificationsCheckbox = document.getElementById("emailNotifications");
+const darkModeToggle = document.getElementById("darkModeToggle");
+
+const clearCacheBtn = document.getElementById("clearCacheBtn");
+const resetLayoutBtn = document.getElementById("resetLayoutBtn");
+
+// ==================== LOGIN CHECK & CARICAMENTO PROFILO ====================
+auth.onAuthStateChanged(async user => {
+  if (!user) {
+    window.location.href = "/login/";
+    return;
+  }
+
+  const ref = doc(db, "users", user.uid);
+  const snap = await getDoc(ref);
+
+  const data = snap.data();
+
+  staffUsername.textContent = data.username || "Non disponibile";
+  staffName.textContent = data.name + " " + data.surname || "Non disponibile";
+  staffEmail.innerHTML = `<a href="mailto:${data.email}">${data.email}</a>` || "Non disponibile";
+  staffRole.textContent = data.role || "Non disponibile";
+
+  // Carica preferenze da localStorage
+  emailNotificationsCheckbox.checked = localStorage.getItem("staff_emailNotifications") === "true";
+  darkModeToggle.checked = localStorage.getItem("staff_darkMode") === "true";
+
+  // Applica tema scuro se attivo
+  if(darkModeToggle.checked) document.body.classList.add("dark-mode");
+});
+
+// ==================== LOGOUT ====================
+logoutBtn.addEventListener("click", async () => {
+  await auth.signOut();
+  window.location.href = "/login/";
+});
+
+// ==================== CAMBIO PASSWORD ====================
+changePasswordForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+
   const current = document.getElementById("currentPassword").value;
   const newP = document.getElementById("newPassword").value;
   const confirm = document.getElementById("confirmPassword").value;
@@ -42,16 +89,38 @@ changePasswordForm.addEventListener("submit", async e => {
     passwordStatusMsg.className = "success";
     changePasswordForm.reset();
   } catch (err) {
-    console.error(err);
     passwordStatusMsg.textContent = "❌ Errore nel cambiare password: " + err.message;
     passwordStatusMsg.className = "error";
   }
 });
 
-// Logout
-logoutBtn.addEventListener("click", async () => {
-  console.log("🚪 Logout in corso...");
-  await auth.signOut();
-  console.log("✅ Logout completato, redirect...");
-  window.location.href = "/login/";
+// ==================== PREFERENZE STAFF ====================
+preferencesForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  localStorage.setItem("staff_emailNotifications", emailNotificationsCheckbox.checked);
+  localStorage.setItem("staff_darkMode", darkModeToggle.checked);
+
+  // Applica tema scuro
+  if(darkModeToggle.checked) document.body.classList.add("dark-mode");
+  else document.body.classList.remove("dark-mode");
+
+  preferencesStatusMsg.textContent = "✅ Preferenze salvate!";
+  preferencesStatusMsg.className = "success";
+
+  setTimeout(() => { preferencesStatusMsg.textContent = ""; }, 3000);
+});
+
+// ==================== SISTEMA ====================
+clearCacheBtn.addEventListener("click", () => {
+  localStorage.clear();
+  alert("Cache locale svuotata!");
+});
+
+resetLayoutBtn.addEventListener("click", () => {
+  // Resetta solo layout / temi / preferenze
+  localStorage.removeItem("staff_darkMode");
+  localStorage.removeItem("staff_emailNotifications");
+  document.body.classList.remove("dark-mode");
+  alert("Layout dashboard reimpostato!");
 });
