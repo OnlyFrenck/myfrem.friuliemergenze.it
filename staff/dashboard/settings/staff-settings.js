@@ -1,6 +1,6 @@
 import { getAuth, updatePassword } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 // ==================== CONFIG FIREBASE ====================
 const firebaseConfig = {
@@ -28,6 +28,9 @@ const staffRole = document.getElementById("staffRole");
 const changePasswordForm = document.getElementById("changePasswordForm");
 const passwordStatusMsg = document.getElementById("passwordStatusMsg");
 
+const bioInput = document.getElementById("bioInput")
+const bioText = document.getElementById("bioText")
+
 const preferencesForm = document.getElementById("preferencesForm");
 const preferencesStatusMsg = document.getElementById("preferencesStatusMsg");
 
@@ -37,6 +40,9 @@ const darkModeToggle = document.getElementById("darkModeToggle");
 const clearCacheBtn = document.getElementById("clearCacheBtn");
 const resetLayoutBtn = document.getElementById("resetLayoutBtn");
 
+let currentUserId = null;
+let currentUser = null
+
 // ==================== LOGIN CHECK & CARICAMENTO PROFILO ====================
 auth.onAuthStateChanged(async user => {
   if (!user) {
@@ -44,15 +50,19 @@ auth.onAuthStateChanged(async user => {
     return;
   }
 
+  currentUserId = user.uid;
+  currentUser = user;
+
   const ref = doc(db, "users", user.uid);
   const snap = await getDoc(ref);
 
   const data = snap.data();
 
-  staffUsername.textContent = data.username || "Non disponibile";
-  staffName.textContent = data.name + " " + data.surname || "Non disponibile";
-  staffEmail.innerHTML = `<a href="mailto:${data.email}">${data.email}</a>` || "Non disponibile";
-  staffRole.textContent = data.role || "Non disponibile";
+  staffUsername.textContent = data.username || "Non disponibile.";
+  staffName.textContent = data.name + " " + data.surname || "Non disponibile.";
+  staffEmail.innerHTML = `<a href="mailto:${data.email}">${data.email}</a>` || "Non disponibile.";
+  staffRole.textContent = data.role || "Non disponibile.";
+  bioText.textContent = data.bio || "Non disponibile."
 
   // Carica preferenze da localStorage
   emailNotificationsCheckbox.checked = localStorage.getItem("staff_emailNotifications") === "true";
