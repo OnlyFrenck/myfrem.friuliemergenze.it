@@ -410,7 +410,7 @@ button.reject:active {
   }
 
   .sidebar .logout {
-    display: none; /* si può riattivare sotto */
+    display: block;
   }
 
   .main-content {
@@ -533,3 +533,9 @@ button.reject:active {
     font-size: 0.85rem;
   }
 }
+
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+th, td { padding: 10px; border-bottom: 1px solid #ffffff; }
+th { background: #ffffff; }
+#statusMsg { margin-top: 10px; color: #aaa; }
+button { padding: 8px 12px; cursor: pointer; }

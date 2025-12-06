@@ -210,14 +210,35 @@ body {
 
 /* Tablet: max-width 992px */
 @media (max-width: 992px) {
-  .sidebar {
-    width: 200px;
-    padding: 0.8rem;
+  body {
+    flex-direction: column;
   }
 
-  .sidebar .logo img {
-    width: 35px;
-    height: 35px;
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+  }
+
+  .sidebar .logo {
+    margin: 0;
+  }
+
+  .sidebar nav {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .sidebar nav a {
+    padding: 8px 12px;
+    margin-bottom: 0;
+  }
+
+  .sidebar .logout {
+    display: block;
   }
 
   .content {
@@ -245,30 +266,24 @@ body {
   }
 
   .sidebar {
-    width: 100%;
-    flex-direction: row;
-    overflow-x: auto;
-    padding: 10px;
-    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 
   .sidebar nav {
+    width: 100%;
     display: flex;
-    flex-direction: row;
-    gap: 8px;
+    flex-direction: column;
   }
 
   .sidebar nav a {
-    padding: 8px 10px;
-    font-size: 0.9rem;
-  }
-
-  .sidebar .logo {
-    display: none;
+    padding: 12px;
   }
 
   .sidebar .logout {
-    display: none;
+    width: 100%;
+    margin-top: 10px;
   }
 
   .content {
