@@ -75,6 +75,12 @@ changePasswordForm.addEventListener("submit", async (e) => {
   const current = document.getElementById("currentPassword").value;
   const newP = document.getElementById("newPassword").value;
   const confirm = document.getElementById("confirmPassword").value;
+  // Controllo password attuale
+  if (current !== auth.currentUser.password) {
+    passwordStatusMsg.textContent = "❌ Password attuale errata!";
+    passwordStatusMsg.className = "error";
+    return;
+  }
 
   if (newP !== confirm) {
     passwordStatusMsg.textContent = "❌ Le nuove password non coincidono!";

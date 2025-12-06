@@ -42,6 +42,11 @@ const saveUsernameBtn = document.getElementById("saveUsernameBtn");
 const bioInput = document.getElementById("bioInput");
 const saveBioBtn = document.getElementById("saveBioBtn");
 
+const currentPasswordInput = document.getElementById("currentPassword");
+const newPasswordInput = document.getElementById("newPassword");
+const confirmPasswordInput = document.getElementById("confirmPassword");
+const savePasswordBtn = document.getElementById("savePasswordBtn");
+
 const logoutBtn = document.getElementById("logoutBtn");
 
 let currentUserId = null;
@@ -110,6 +115,36 @@ saveBioBtn.addEventListener("click", async () => {
   });
 
   alert("Biografia aggiornata!");
+});
+
+// 📝 SALVA PASSWORD
+savePasswordBtn.addEventListener("click", async () => {
+  const currentPassword = currentPasswordInput.value;
+  const newPassword = newPasswordInput.value;
+  const confirmPassword = confirmPasswordInput.value;
+  // Controllo password attuale
+  if (currentPassword !== auth.currentUser.password) {
+    return alert("Password attuale errata!");
+  }
+  if (currentPassword.length === 0) return alert("Inserisci la password attuale!");
+  if (newPassword.length < 6) return alert("La nuova password deve essere di almeno 6 caratteri!");
+  if (newPassword !== confirmPassword) return alert("Le nuove password non corrispondono!");
+  // Re-authenticate user
+  const credential = auth.EmailAuthProvider.credential(
+    currentUser.email,
+    currentPassword
+  );
+
+  try {
+    await currentUser.reauthenticateWithCredential(credential);
+    await currentUser.updatePassword(newPassword);
+    await updateDoc(doc(db, "users", currentUserId), {
+      passwordUpdatedAt: new Date()
+    });
+    alert("Password aggiornata con successo!");
+  } catch (error) {
+    alert("Errore durante l'aggiornamento della password: " + error.message);
+  }
 });
 
 // 🚪 LOGOUT

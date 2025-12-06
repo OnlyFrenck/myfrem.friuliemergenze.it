@@ -2,6 +2,8 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Impostazioni utente | MyFrEM - La migliore piattaforma in Friuli-Venezia Giulia nel caricamento foto inerenti l'emergenza</title>
   <link rel="stylesheet" href="/dashboard/dsh.css">
   <link rel="shortcut icon" href="https://friuliemergenze.it/assets/logo.png">
@@ -24,7 +26,7 @@
     <button id="logoutBtn" class="logout">🚪 Logout</button>
   </aside>
 
-  <div class="main-content" style="max-width: 1800px;">
+  <div class="main-content">
     <div class="settings-container">
         <h1 class="title">Impostazioni account</h1>
 
@@ -62,7 +64,12 @@
         <!-- PASSWORD -->
         <section class="settings-card" id="passwordCard">
           <h2>Cambia password</h2>
-          <input type="password" id="newPassword" placeholder="Nuova password" class="input">
+          <h3>Password attuale</h3>
+          <input type="password" id="currentPassword" class="input">
+          <h3>Nuova password</h3>
+          <input type="password" id="newPassword" class="input">
+          <h3>Conferma nuova password</h3>
+          <input type="password" id="confirmPassword" class="input">
           <button id="savePasswordBtn" class="btn">Aggiorna password</button>
         </section>
 

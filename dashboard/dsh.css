@@ -204,6 +204,38 @@ body {
   background: #d63131 !important;
 }
 
+.contact-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 25px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.08);
+}
+
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.layout {
+  display: flex;
+  height: 100%;
+}
+
 /* -------------------------------
    RESPONSIVE DASHBOARD
    ------------------------------- */
@@ -215,7 +247,7 @@ body {
   }
 
   .sidebar {
-    width: 100%;
+    width: 93%;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -256,6 +288,19 @@ body {
 
   .settings-container {
     padding: 15px;
+  }
+
+  .settings-card {
+    padding: 20px;
+    width: 93%;
+  }
+
+  .settings-card input {
+    width: 95%;
+  }
+
+  .settings-card .textarea {
+    width: 95%;
   }
 }
 
