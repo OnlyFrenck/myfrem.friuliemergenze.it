@@ -100,6 +100,17 @@ changePasswordForm.addEventListener("submit", async (e) => {
   }
 });
 
+// ==================== BIO ====================
+saveBioBtn.addEventListener("click", async () => {
+  const newBio = bioInput.value.trim();
+
+  await updateDoc(doc(db, "users", currentUserId), {
+    bio: newBio
+  });
+
+  alert("Biografia aggiornata!");
+});
+
 // ==================== PREFERENZE STAFF ====================
 preferencesForm.addEventListener("submit", (e) => {
   e.preventDefault();

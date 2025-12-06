@@ -5,10 +5,8 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f4f7fa;
   color: #333;
-}
-
-.dashboard {
   display: flex;
+  flex-direction: row;
   min-height: 100vh;
 }
 
@@ -73,9 +71,13 @@ body {
 }
 
 /* Main content */
-.content {
+.main-content {
+  margin-left: 250px;
   flex: 1;
-  padding: 2rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
 .header h1 {
@@ -242,39 +244,15 @@ button {
 
 /* Tablet: max-width 992px */
 @media (max-width: 992px) {
-  body {
-    flex-direction: column;
-  }
-
   .sidebar {
     width: 93%;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px;
+    padding: 1rem;
   }
 
-  .sidebar .logo {
-    margin: 0;
-  }
-
-  .sidebar nav {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .sidebar nav a {
-    padding: 8px 12px;
-    margin-bottom: 0;
-  }
-
-  .sidebar .logout {
-    display: block;
-  }
-
-  .content {
+  .main-content {
+    width: 93%;
     padding: 1.5rem;
+    margin-left: 0;
   }
 
   .cards {
@@ -292,13 +270,10 @@ button {
 
   .settings-card {
     padding: 20px;
-    width: 93%;
-  }
-
-  .settings-card input {
     width: 95%;
   }
 
+  .settings-card input,
   .settings-card .textarea {
     width: 95%;
   }
@@ -306,24 +281,30 @@ button {
 
 /* Mobile: max-width 768px */
 @media (max-width: 768px) {
+  /* Sidebar sopra, main sotto */
   body {
     flex-direction: column;
   }
 
   .sidebar {
+    width: 91%;
+    height: auto;
     flex-direction: column;
     align-items: center;
     text-align: center;
+    position: relative;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
   }
 
   .sidebar nav {
     width: 100%;
     display: flex;
     flex-direction: column;
+    gap: 8px;
   }
 
   .sidebar nav a {
-    padding: 12px;
+    padding: 10px 0;
   }
 
   .sidebar .logout {
@@ -331,16 +312,9 @@ button {
     margin-top: 10px;
   }
 
-  .content {
+  .main-content {
+    width: 91%;
     padding: 1rem;
-  }
-
-  .header h1 {
-    font-size: 1.6rem;
-  }
-
-  .header p {
-    font-size: 0.9rem;
   }
 
   .cards {
@@ -364,40 +338,10 @@ button {
     padding: 0.8rem;
     font-size: 0.9rem;
   }
-
-  .settings-container {
-    max-width: 100%;
-    margin: 20px 0;
-    padding: 12px;
-  }
-
-  .settings-card {
-    padding: 18px;
-  }
-
-  .input, .textarea {
-    width: 100%;
-    padding: 10px;
-    font-size: 0.9rem;
-  }
-
-  .textarea {
-    height: 100px;
-  }
-
-  .btn {
-    padding: 8px 16px;
-    font-size: 0.9rem;
-  }
 }
 
 /* Extra small: max-width 480px */
 @media (max-width: 480px) {
-  .sidebar {
-    flex-direction: column;
-    text-align: center;
-  }
-
   .sidebar nav {
     flex-direction: column;
   }

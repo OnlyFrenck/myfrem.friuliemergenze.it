@@ -260,6 +260,22 @@ body.dark-mode {
 .success { color: #2ecc71; }
 .error { color: #e74c3c; }
 
+.input, .textarea {
+  width: 97%;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+  background: #fff;
+  color: #333;
+}
+
+.textarea {
+  height: 120px;
+  resize: none;
+}
+
 /* ------------------------------------------------ */
 /*                 RESPONSIVE DESIGN                */
 /* ------------------------------------------------ */
