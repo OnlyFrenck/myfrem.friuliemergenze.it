@@ -48,7 +48,7 @@ form.addEventListener("submit", async (e) => {
       subject,
       message,
       createdAt: serverTimestamp(),
-      status: "open"
+      status: "Aperta"
     });
 
     result.innerText = "✅ Messaggio inviato! Ti risponderemo al più presto.";

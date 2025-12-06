@@ -376,6 +376,34 @@ button.reject:active {
   font-size: 1rem;
 }
 
+.closeRequestBtn {
+  background: #c71616;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.closeRequestBtn:hover {
+  background: #ee0404;
+}
+
+.reopenRequestBtn {
+  background: #12df4f;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.reopenRequestBtn:hover {
+  background: #05d120;
+}
+
 /* =========================================
    RESPONSIVE DASHBOARD STAFF
    ========================================= */

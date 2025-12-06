@@ -1,0 +1,109 @@
+// ✅ Import Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, query, where, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+// 🔥 Config Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
+  authDomain: "friuli-emergenze.firebaseapp.com",
+  projectId: "friuli-emergenze",
+  storageBucket: "friuli-emergenze.firebasestorage.app",
+  messagingSenderId: "362899702838",
+  appId: "1:362899702838:web:da96f62189ef1fa2010497",
+  measurementId: "G-THNJG888RE"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ✅ Riferimenti DOM
+const requestsContainer = document.getElementById("contactRequestsTableBody");
+const logoutBtn = document.getElementById("logoutBtn");
+
+// 🚪 Logout
+logoutBtn.addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "/login";
+});
+
+// 🔑 Controllo autenticazione + ruolo staff
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        window.location.href = "/login";
+        return;
+    };
+    // Verifica che sia staff
+    const userDoc = await getDocs(
+        query(collection(db, "users"), where("__name__", "==", user.uid))
+    );
+    if (userDoc.empty || userDoc.docs[0].data().role !== "staff") {
+        alert("❌ Accesso negato: non sei staff!");
+        window.location.href = "/dashboard";
+        return;
+    }
+    // ✅ Se staff, carica le richieste di contatto
+    loadContactRequests();
+});
+
+// 📞 Funzione per caricare richieste di contatto
+async function loadContactRequests() {
+    try {
+        const userSnap = await getDocs(collection(db, "users"));
+        const requestsSnap = await getDocs(collection(db, "messages"));
+        requestsContainer.innerHTML = "";
+        requestsSnap.forEach((doc) => {
+            const request = doc.data();
+            const createdAt = request.createdAt?.toDate().toLocaleString() || "N/A";
+            const userData = userSnap.docs.find(u => u.id === request.userId)?.data() || { name: "Utente non autenticato" };
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${userData.name}</td>
+                <td>${request.email}</td>
+                <td>${request.subject}</td>
+                <td>${request.message}</td>
+                <td>${request.status}</td>
+                <td>${createdAt}</td>
+                <td>
+                  <button class="closeRequestBtn" data-id="${doc.id}">Chiudi</button>
+                  <button class="reopenRequestBtn" data-id="${doc.id}">Riapri</button>
+                </td>
+            `;
+            requestsContainer.appendChild(row);
+        });
+        // Aggiungi event listeners ai bottoni
+        document.querySelectorAll(".closeRequestBtn").forEach((btn, doc) => {
+            btn.addEventListener("click", async (e) => {
+                const requestId = e.target.getAttribute("data-id");
+                await updateRequestStatus(requestId, "Chiusa");
+                alert(`La richiesta di assistenza selezionata è stata chiusa.`)
+                loadContactRequests();
+            });
+        });
+        document.querySelectorAll(".reopenRequestBtn").forEach((btn, doc) => {
+            btn.addEventListener("click", async (e) => {
+                const requestId = e.target.getAttribute("data-id");
+                await updateRequestStatus(requestId, "Aperta");
+                alert(`La richiesta di assistenza selezionata è stata riaperta`)
+                loadContactRequests();
+            });
+        });
+    } catch (error) {
+        console.error("Errore nel caricamento delle richieste di contatto:", error);
+        alert("❌ Si è verificato un errore nel caricamento delle richieste di contatto.");
+    }
+};
+
+async function updateRequestStatus(requestId, newStatus) {
+  try {
+    if (!requestId) throw new Error("ID richiesta non fornito");
+
+    const requestRef = doc(db, "messages", requestId);
+    await updateDoc(requestRef, { status: newStatus });
+
+    console.log(`✅ Richiesta ${requestId} aggiornata a "${newStatus}"`);
+  } catch (error) {
+    console.error("Errore nell'aggiornamento dello status:", error);
+    alert("❌ Si è verificato un errore durante l'aggiornamento dello status.");
+  }
+}
