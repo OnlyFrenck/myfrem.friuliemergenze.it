@@ -552,6 +552,35 @@ button.reject:active {
   padding: 2rem;
 }
 
+.btn-small {
+  display: inline-block;
+  background-color: #2563eb; /* blu principale */
+  color: #fff;
+  padding: 6px 12px; /* più piccolo rispetto a btn normale */
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-small:hover {
+  background-color: #1d4ed8; /* blu scuro al passaggio del mouse */
+  transform: translateY(-1px);
+}
+
+.btn-small:active {
+  transform: scale(0.96);
+}
+
+.btn-small:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
 /* Responsive: su mobile diventa verticale */
 @media (max-width: 768px) {
   .form-row {

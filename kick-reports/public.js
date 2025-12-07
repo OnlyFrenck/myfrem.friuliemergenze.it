@@ -17,12 +17,15 @@ const db = getFirestore(app);
 const urlParams = new URLSearchParams(window.location.search);
 const reportId = urlParams.get('id');
 const reportBox = document.getElementById("publicReportBox");
+const titleReport = document.getElementById("titleReport")
 
 async function loadPublicReport() {
   if (!reportId) {
     reportBox.innerHTML = "<p>❌ Inserisci un id report valido.</p>";
     return;
   }
+
+  titleReport.innerHTML = `Report ${reportId} | MyFrEM - La migliore piattaforma in Friuli-Venezia Giulia nel caricamento foto inerenti l'emergenza`
 
   // Prendi il report
   const docRef = doc(db, "expulsionReports", reportId);
@@ -49,7 +52,7 @@ async function loadPublicReport() {
   }
 
   reportBox.innerHTML = `
-    <h2>📄 Report di Espulsione</h2>
+    <h2>📄 Report di Espulsione ${reportId}</h2>
     <h3>Utente Espulso:</h3>
     <p>${data.userName || "—"}</p>
 
