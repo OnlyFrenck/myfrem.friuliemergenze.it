@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualizza - Rapporto di Espulsione | MyFrEM - La migliore piattaforma in Friuli-Venezia Giulia nel caricamento foto inerenti l'emergenza</title>
+  <link rel="stylesheet" href="/staff/dashboard/kick-reports/view/view.css">
+  <link rel="shortcut icon" href="https://friuliemergenze.it/assets/logo.png" type="image/x-icon">
+  <script type="module" src="/staff/dashboard/kick-reports/view/view.js"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="https://friuliemergenze.it/assets/logo.png" alt="MyFrEM Logo">
+      <h2>MyFrEM Staff</h2>
+    </div>
+    <nav>
+      <a href="/staff">📊 Dashboard</a>
+      <a href="/staff/dashboard/photos/">🖼️ Moderazione foto</a>
+      <a href="/staff/dashboard/users/">👥 Gestione utenti</a>
+      <a href="/staff/dashboard/kick-reports/" class="active">🗂️ Rapporto di espulsione</a>
+      <a href="/staff/dashboard/contactrq/">📞 Richieste di assistenza</a>
+      <a href="/staff/dashboard/settings/">⚙️ Impostazioni</a>
+    </nav>
+    <button id="logoutBtn" class="logout">🚪 Logout</button>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h2>📄 Dettagli Kick Report</h2>
+      <p>Visualizza tutte le informazioni relative al report selezionato.</p>
+      <a href="/staff/dashboard/kick-reports/" class="btn-primary">⬅️ Torna alla lista</a>
+    </div>
+
+    <div class="activity-box" id="reportDetails">
+      <!-- Dettagli caricati dinamicamente via JS -->
+      <p>Caricamento report...</p>
+    </div>
+  </main>
+</body>
+</html>
