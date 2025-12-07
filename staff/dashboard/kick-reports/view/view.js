@@ -54,7 +54,7 @@ async function loadReport(id) {
   const data = snapshot.data();
 
   reportDetails.innerHTML = `
-    <a href="/staff/dashboard/kick-reports/edit/?id=${reportId}" class="btn-tertiary">Modifica report</a>
+    <a href="/staff/dashboard/kick-reports/edit/?id=${reportId}" target="_blank" class="btn-tertiary">Modifica report</a>
     <h3>Utente Espulso:</h3>
     <p>${data.userName || "—"}</p>
 
