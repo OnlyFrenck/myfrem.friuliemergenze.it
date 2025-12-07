@@ -1,6 +1,4 @@
-/* ================================
-   Reset e base
-================================ */
+/* Reset base */
 * {
   margin: 0;
   padding: 0;
@@ -10,16 +8,14 @@
 
 body {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   background-color: #f4f6f9;
   color: #333;
 }
 
-/* ================================
-   Sidebar
-================================ */
+/* Sidebar */
 .sidebar {
-  width: 650px;
+  width: 30%;
   background: #222;
   color: #fff;
   display: flex;
@@ -35,12 +31,15 @@ body {
 .sidebar .logo img {
   width: 60px;
   border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
 }
 
 .sidebar .logo h2 {
   font-size: 1.2rem;
   margin-top: 10px;
+}
+
+.sidebar nav {
+  flex-grow: 1;
 }
 
 .sidebar nav a {
@@ -60,7 +59,6 @@ body {
 }
 
 .sidebar .logout {
-  margin-top: 692px;
   background: #e74c3c;
   color: white;
   padding: 10px;
@@ -74,9 +72,7 @@ body {
   background: #c0392b;
 }
 
-/* ================================
-   Main Content
-================================ */
+/* Main Content */
 .main-content {
   flex-grow: 1;
   padding: 30px;
@@ -124,6 +120,23 @@ body {
 
 .btn-secondary:hover {
   background-color: #860a0a;
+  transform: translateY(-1px);
+}
+
+.btn-tertiary {
+  margin-top: 25px;
+  display: inline-block;
+  background-color: #2e9ca0;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.btn-tertiary:hover {
+  background-color: #0ad8df;
   transform: translateY(-1px);
 }
 

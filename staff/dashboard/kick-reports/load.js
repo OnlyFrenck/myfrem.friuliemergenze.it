@@ -32,7 +32,7 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
 const reportsList = document.getElementById("kickReportsList");
 
 // Carica i report
-function loadKickReports() {
+async function loadKickReports() {
   const reportsRef = collection(db, "expulsionReports");
   const q = query(reportsRef, orderBy("createdAt", "desc"));
 
@@ -55,8 +55,8 @@ function loadKickReports() {
       row.innerHTML = `
         <td>#${reportId}</td>
         <td>${data.userName || "—"}</td>
-        <td>${data.staffName || "—"}</td>
-        <td>${data.reason || "—"}</td>
+        <td>${data.reportedBy || "—"}</td>
+        <td>Vedi <a href="/staff/dashboard/kick-reports/view/?id=${reportId}">Report di espulsione</a></td>
         <td>${data.notes || "Non specificate"}</td>
         <td>${data.expulsionDate || "-"}</td>
         <td>

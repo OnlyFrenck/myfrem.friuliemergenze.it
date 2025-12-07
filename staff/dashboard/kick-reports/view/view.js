@@ -30,6 +30,7 @@ onAuthStateChanged(auth, user => {
 
 // Riferimento al contenitore
 const reportDetails = document.getElementById("reportDetails");
+const pageHeader = document.getElementsByClassName("page-header")
 
 // Ottieni ID dalla query string
 const params = new URLSearchParams(window.location.search);
@@ -53,6 +54,7 @@ async function loadReport(id) {
   const data = snapshot.data();
 
   reportDetails.innerHTML = `
+    <a href="/staff/dashboard/kick-reports/edit/?id=${reportId}" class="btn-tertiary">Modifica report</a>
     <h3>Utente Espulso:</h3>
     <p>${data.userName || "—"}</p>
 

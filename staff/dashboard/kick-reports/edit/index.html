@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifica Report </title>
+
+    <link rel="stylesheet" href="/staff/dashboard/kick-reports/edit/style.css">
+    <script type="module" src="/staff/dashboard/kick-reports/edit/edit.js"></script>
+</head>
+<body>
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="https://friuliemergenze.it/assets/logo.png" alt="Logo">
+        <h2>MyFrEM Staff</h2>
+      </div>
+      <nav>
+        <a href="/staff">📊 Dashboard</a>
+        <a href="/staff/dashboard/photos/">🖼️ Moderazione foto</a>
+        <a href="/staff/dashboard/users/">👥 Gestione utenti</a>
+        <a href="/staff/dashboard/kick-reports/" class="active">🗂️ Rapporto di espulsione</a>
+        <a href="/staff/dashboard/contactrq/">📞 Richieste di assistenza</a>
+        <a href="/staff/dashboard/settings/">⚙️ Impostazioni</a>
+      </nav>
+      <button id="logoutBtn" class="logout">🚪 Logout</button>
+    </aside>
+
+    <main class="main-content">
+      <div class="page-header">
+        <h2>📝 Modifica Report</h2>
+        <p>Aggiungi note e allegati al report selezionato.</p>
+      </div>
+      <div class="report-box">
+        <h3>📄 Dettagli Report</h3>
+        <div id="reportDetails" class="details">
+          Caricamento...
+        </div>
+      </div>
+      <div class="add-note-box">
+        <h3>🗒️ Aggiungi Nota</h3>
+        <form id="addNoteForm">
+          <textarea id="noteText" placeholder="Scrivi qui la nota..." required></textarea>
+          <label>Allegato (URL opzionale):</label>
+          <input type="url" id="noteAttachment" placeholder="https://...">
+          <button type="submit" class="btn-primary">💾 Salva Nota</button>
+        </form>
+        <p id="statusMsg"></p>
+      </div>
+      <div class="notes-list">
+        <h3>📚 Note precedenti</h3>
+        <ul id="notesContainer"></ul>
+      </div>
+    </main>
+</body>
+</html>
+</html>
