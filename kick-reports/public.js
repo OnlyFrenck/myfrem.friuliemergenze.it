@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-// Config Firebase (stesso tuo)
+// Config Firebase
 const firebaseConfig = { 
   apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
   authDomain: "friuli-emergenze.firebaseapp.com",
@@ -10,7 +10,7 @@ const firebaseConfig = {
   messagingSenderId: "362899702838",
   appId: "1:362899702838:web:da96f62189ef1fa2010497",
   measurementId: "G-THNJG888RE"
- };
+};
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -20,10 +20,11 @@ const reportBox = document.getElementById("publicReportBox");
 
 async function loadPublicReport() {
   if (!reportId) {
-    reportBox.innerHTML = "<p>❌ Report non trovato.</p>";
+    reportBox.innerHTML = "<p>❌ Inserisci un id report valido.</p>";
     return;
   }
 
+  // Prendi il report
   const docRef = doc(db, "expulsionReports", reportId);
   const docSnap = await getDoc(docRef);
 
@@ -33,6 +34,20 @@ async function loadPublicReport() {
   }
 
   const data = docSnap.data();
+
+  // Prendi l'email dello staffer usando l'ID
+  let staffEmail = "-";
+  let staffName = "-"
+  if (data.reportedBy) {
+    const userRef = doc(db, "users", data.reportedBy);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+      staffEmail = userData.email || "-";
+      staffName = userData.name || "-"
+    }
+  }
+
   reportBox.innerHTML = `
     <h2>📄 Report di Espulsione</h2>
     <h3>Utente Espulso:</h3>
@@ -42,7 +57,7 @@ async function loadPublicReport() {
     <p>${data.userNumber || "—"}</p>
 
     <h3>Staff che ha segnalato:</h3>
-    <p>${data.reportedBy}</p>
+    <p>${staffName} - ${staffEmail !== "-" ? `<a href="mailto:${staffEmail}">${staffEmail}</a>` : "-"}</p>
 
     <h3>Motivo:</h3>
     <p>${data.reason || "—"}</p>
