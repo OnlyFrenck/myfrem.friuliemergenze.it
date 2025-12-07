@@ -62,7 +62,7 @@ async function loadKickReports() {
         <td>
           <a href="/staff/dashboard/kick-reports/view/?id=${reportId}" class="btn-small">👁️ Staff</a>
           <p></p>
-          <a href="/kick-reports/?id=${reportId}" class="btn-small">🌐 Pubblico</a>
+          <a href="/kick-reports/?id=${reportId}" class="btn-small" style="margin-top: 10px;">🌐 Pubblico</a>
         </td>`;
       reportsList.appendChild(row);
     });
