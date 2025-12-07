@@ -60,7 +60,8 @@ function loadKickReports() {
         <td>${data.notes || "Non specificate"}</td>
         <td>${data.expulsionDate || "-"}</td>
         <td>
-          <a href="/staff/dashboard/kick-reports/view/?id=${reportId}" class="btn-small">👁️</a>
+          <a href="/staff/dashboard/kick-reports/view/?id=${reportId}" class="btn-small">👁️ Staff</a>
+          <a href="/kick-reports/public/?id=${reportId}" class="btn-small">🌐 Pubblico</a>
         </td>`;
       reportsList.appendChild(row);
     });
