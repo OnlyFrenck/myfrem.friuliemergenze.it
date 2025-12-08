@@ -30,6 +30,12 @@ logoutBtn.addEventListener("click", async () => {
 
 // Verifica login e ruolo staff
 onAuthStateChanged(auth, async user => {
+  if (user.uid !== "J1eRe4W2edgovr1sgUw8fqJv76E2") {
+    alert("Accesso negato: solo Francesco può accedere a questa pagina.");
+    window.location.href = "/dashboard/";
+    return;
+  }
+
   if (!user) {
     window.location.href = "/login/";
     return;
