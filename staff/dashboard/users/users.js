@@ -32,7 +32,7 @@ logoutBtn.addEventListener("click", async () => {
 onAuthStateChanged(auth, async user => {
   if (user.uid !== "J1eRe4W2edgovr1sgUw8fqJv76E2") {
     alert("Accesso negato: solo Francesco può accedere a questa pagina.");
-    window.location.href = "/dashboard/";
+    window.location.href = "/staff/dashboard/";
     return;
   }
 
