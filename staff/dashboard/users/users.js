@@ -33,6 +33,7 @@ onAuthStateChanged(auth, async user => {
   if (user.uid !== "J1eRe4W2edgovr1sgUw8fqJv76E2") {
     alert("Accesso negato: solo Francesco può accedere a questa pagina.");
     window.location.href = "/staff/dashboard/";
+    auth.keptSignIn = true;
     return;
   }
 
@@ -42,7 +43,7 @@ onAuthStateChanged(auth, async user => {
   }
 
   const userDocRef = doc(db, "users", user.uid);
-  const userDocSnap = await getDoc(userDocRef); // <-- usa getDoc
+  const userDocSnap = await getDoc(userDocRef);
   const userData = userDocSnap.data();
 
   if (!userData || userData.role !== "staff") {
@@ -66,6 +67,7 @@ async function loadUsers() {
 
     tr.innerHTML = `
       <td>${u.name || ""}</td>
+      <td>${u.surname || ""}</td>
       <td>${u.email || ""}</td>
       <td>${u.username || ""}</td>
       <td>${u.role || "Stato utente non disponibile."}</td>

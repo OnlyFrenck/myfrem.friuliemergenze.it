@@ -19,6 +19,8 @@
       <a href="/dashboard">🏠 Home</a>
       <a href="/dashboard/upload">📸 Carica una foto</a>
       <a href="/dashboard/all-photos">📸 Le mie foto</a>
+      <a href="/dashboard/create-event/">🗂️ Crea un evento</a>
+        <a href="/dashboard/all-events/">🗂️ I miei eventi</a>
       <a href="/dashboard/settings/" class="active">⚙️ Impostazioni</a>
       <p></p>
       <a href="/dashboard/contact/">📞 Contattaci</a>
@@ -52,6 +54,16 @@
           </p>
           <input type="text" id="usernameInput" class="input">
           <button id="saveUsernameBtn" class="btn">Salva username</button>
+        </section>
+
+        <!--EMAIL-->
+        <section class="settings-card">
+          <h2>E-Mail</h2>
+          <p id="mail">La tua mail di accesso è
+              <span id="mailText"></span>
+          </p>
+          <input type="text" id="mailInput" class="input">
+          <button id="saveMailBtn" class="btn">Salva e-mail di accesso</button>
         </section>
 
         <!-- BIO -->

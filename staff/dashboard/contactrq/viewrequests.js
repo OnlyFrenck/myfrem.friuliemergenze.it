@@ -74,6 +74,10 @@ async function loadContactRequests() {
         // Aggiungi event listeners ai bottoni
         document.querySelectorAll(".closeRequestBtn").forEach((btn, doc) => {
             btn.addEventListener("click", async (e) => {
+                const request = requestsSnap.docs.find(r => r.id === e.target.getAttribute("data-id")).data();
+                if (request.status === "Chiusa") {
+                    alert("❌ Non puoi chiudere una richiesta già chiusa.");
+                }
                 const requestId = e.target.getAttribute("data-id");
                 await updateRequestStatus(requestId, "Chiusa");
                 alert(`La richiesta di assistenza selezionata è stata chiusa.`)

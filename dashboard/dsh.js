@@ -28,6 +28,12 @@ const activityListEl = document.getElementById("activityList");
 auth.onAuthStateChanged(async (user) => {
   console.log("👀 onAuthStateChanged triggered, user:", user);
 
+  if (user.role === "staff") {
+    alert("Accesso negato: solo utenti normali possono accedere a questa pagina. Utilizza il tuo account personale.");
+    window.location.href = "/staff/dashboard/";
+    return;
+  }
+
   if (!user) {
     console.warn("⚠️ Nessun utente loggato, redirect al login...");
     window.location.href = "/login/";

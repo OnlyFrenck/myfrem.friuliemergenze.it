@@ -1,0 +1,104 @@
+/* ===== Reset base ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f5f6fa;
+  color: #333;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+header h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+header p {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Container eventi */
+.events-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+/* Card evento */
+.event-card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  padding: 20px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.event-card h3 {
+  font-size: 1.2rem;
+  color: #0073e6;
+}
+
+.event-card p {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.event-card .status {
+  font-weight: bold;
+  font-size: 0.9rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.status.revision { background-color: #f39c12; color: #fff; }
+.status.approved { background-color: #2ecc71; color: #fff; }
+.status.organized { background-color: #0073e6; color: #fff; }
+.status.rejected { background-color: #e74c3c; color: #fff; }
+
+/* Pulsante visualizza */
+.btn-view {
+  text-decoration: none;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: #0073e6;
+  color: #fff;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.btn-view:hover {
+  background-color: #005bb5;
+}
+
+/* Messaggi status */
+#statusMsg {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 20px;
+  color: #e74c3c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .event-card {
+    width: 90%;
+  }
+}

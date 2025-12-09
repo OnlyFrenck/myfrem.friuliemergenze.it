@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I miei eventi | MyFrEM - La migliore piattaforma in Friuli-Venezia Giulia nel caricamento foto inerenti l'emergenza</title>
+    <link rel="stylesheet" href="/dashboard/all-events/style.css">
+    <link rel="shortcut icon" href="https://friuliemergenze.it/assets/logo.png">
+    <script type="module" src="/dashboard/all-events/load.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+    <div class="logo">
+        <img src="https://friuliemergenze.it/assets/logo.png" alt="MyFrEM Logo">
+        <h2>MyFrEM</h2>
+    </div>
+    <nav>
+        <a href="/dashboard">🏠 Home</a>
+        <a href="/dashboard/upload">📸 Carica una foto</a>
+        <a href="/dashboard/all-photos">📸 Le mie foto</a>
+        <a href="/dashboard/create-event/">🗂️ Crea un evento</a>
+        <a href="/dashboard/all-events/" class="active">🗂️ I miei eventi</a>
+        <a href="/dashboard/settings/">⚙️ Impostazioni</a>
+        <p></p>
+        <a href="/dashboard/contact/">📞 Contattaci</a>
+    </nav>
+    <button id="logoutBtn" class="logout">🚪 Logout</button>
+</aside>
+
+<main class="main-content">
+    <div class="event-box">
+        <h2>📚 I miei eventi</h2>
+        <p>Qui trovi tutti gli eventi creati da te e ancora in fase di revisione o già approvati dallo staff.</p>
+        <div id="eventsList" class="events-container" style="margin-top: 50px;">
+            <!-- JS inserirà gli eventi -->
+        </div>
+        <p id="statusMsg"></p>
+    </div>
+</main>
+</body>
+</html>

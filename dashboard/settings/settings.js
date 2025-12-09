@@ -39,6 +39,10 @@ const usernameInput = document.getElementById("usernameInput");
 const userText = document.getElementById("userText");
 const saveUsernameBtn = document.getElementById("saveUsernameBtn");
 
+const mailInput = document.getElementById("mailInput");
+const mailText = document.getElementById("mailText");
+const saveMailBtn = document.getElementById("saveMailBtn");
+
 const bioInput = document.getElementById("bioInput");
 const saveBioBtn = document.getElementById("saveBioBtn");
 
@@ -76,6 +80,7 @@ async function loadUserData(uid) {
 
   fullNameText.innerHTML = `<b>${data.name} ${data.surname}</b>` || "";
   userText.innerHTML = `<b>${data.username}</b>` || "";
+  mailText.innerHTML = `<b>${data.email}</b>` || "";
   bioInput.value = data.bio || "";
 }
 
@@ -104,6 +109,18 @@ saveUsernameBtn.addEventListener("click", async () => {
   });
 
   alert("Username aggiornato!");
+});
+
+// 📝 SALVA MAIL
+saveMailBtn.addEventListener("click", async () => {
+  const newMail = mailInput.value.trim();
+  if (newMail.length < 5 || !newMail.includes("@")) return alert("Inserisci una mail valida!");
+
+  await updateDoc(doc(db, "users", currentUserId), {
+    email: newMail
+  });
+
+  alert("E-Mail aggiornato!");
 });
 
 // 📝 SALVA BIO

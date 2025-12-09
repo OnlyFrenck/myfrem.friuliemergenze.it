@@ -55,7 +55,7 @@ async function loadKickReports() {
       row.innerHTML = `
         <td>#${reportId}</td>
         <td>${data.userName || "—"}</td>
-        <td>${data.reportedBy || "—"}</td>
+        <td>${data.reportedBy}</td>
         <td>Vedi <a href="/staff/dashboard/kick-reports/view/?id=${reportId}">Report di espulsione</a></td>
         <td>${data.notes || "Non specificate"}</td>
         <td>${data.expulsionDate || "-"}</td>

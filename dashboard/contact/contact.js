@@ -59,3 +59,10 @@ form.addEventListener("submit", async (e) => {
     result.innerText = "❌ Errore durante l'invio.";
   }
 });
+
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  console.log("🚪 Logout in corso...");
+  await auth.signOut();
+  console.log("✅ Logout completato, redirect...");
+  window.location.href = "/login/";
+});
