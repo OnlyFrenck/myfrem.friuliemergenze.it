@@ -39,16 +39,7 @@ async function loadPublicEvents() {
       const div = document.createElement("div");
       div.className = "event-card";
       const statusP = document.getElementById("status");
-      if (e.status === "In revisione...") {
-        statusP.className = "status revision";
-      }
-      if (e.status === "Approvato") {
-        statusP.className = "status approved";
-      }
-      if (e.status === "Rifiutato") {
-        statusP.className = "status rejected";
-      }
-      
+
       div.innerHTML = `
         <h3>${e.title}</h3>
         <h4><b>🆔 ID Evento:</b></h4>
@@ -60,7 +51,7 @@ async function loadPublicEvents() {
         <p>${e.description || "Non specificata."}</p>
 
         <h4><b>📲 Stato di revisione staff:</b></h4>
-        <p class="status">${e.status || "Non trovato."}</p>
+        <p class="status null">${e.status || "Non trovato."}</p>
 
         <h4><b>📅 Data creazione richiesta:</b></h4>
         <p>${e.createdAt?.toDate().toLocaleString() || "Non trovata."}</p>
