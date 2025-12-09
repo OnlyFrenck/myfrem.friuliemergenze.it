@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 // 🔥 Config Firebase
 const firebaseConfig = {
@@ -18,32 +18,45 @@ const db = getFirestore(app);
 const eventsList = document.getElementById("eventsList");
 const statusMsg = document.getElementById("statusMsg");
 const titleEvent = document.getElementById("titleEvent");
+const eventIdh = document.getElementById("eventId");
 
-// Carica tutti gli eventi pubblici
-async function loadPublicEvents() {
+// Recupero ID dall’URL
+const idParam = new URLSearchParams(window.location.search);
+const eventId = idParam.get('id');
+
+// Se non c’è ID → errore
+if (!eventId) {
+    eventsList.innerHTML = "<p class='error'>❌ Nessun ID evento fornito nell'URL.</p>";
+    throw new Error("Missing event ID");
+}
+
+// Carica evento specifico
+async function loadPublicEvent() {
   try {
-    const q = query(collection(db, "events"), orderBy("createdAt", "desc"));
-    const snap = await getDocs(q);
+    const ref = doc(db, "events", eventId);
+    const snap = await getDoc(ref);
 
-    if (snap.empty) {
-      eventsList.innerHTML = "<p class='info'>Questo ID evento non esiste nel database. Controlla di aver selezionato l'evento giusto.</p>";
+    if (!snap.exists()) {
+      eventsList.innerHTML = "<p class='info'>❌ Questo ID evento non esiste nel database.</p>";
       return;
     }
 
-    eventsList.innerHTML = "";
+    const e = snap.data();
+    eventsList.innerHTML = ""; // pulizia
 
-    snap.forEach(doc => {
-      const e = doc.data();
-      eventId.textContent = `📅 Evento: ${e.title}`;
-      titleEvent.textContent = `Evento ${doc.id} | MyFrEM - La migliore in Friuli-Venezia Giulia nel caricamento foto inerenti l'emergenza`;
-      const div = document.createElement("div");
-      div.className = "event-card";
-      const statusP = document.getElementById("status");
+    // Titoli dinamici
+    eventIdh.textContent = `📅 Evento: ${e.title}`;
+    titleEvent.textContent = `${e.title} - Registro Eventi | MyFrEM - La migliore in Friuli-Venezia Giulia nel caricamento foto inerenti l'emergenza`;
 
-      div.innerHTML = `
+    const div = document.createElement("div");
+    div.className = "event-card";
+
+    div.innerHTML = `
         <h3>${e.title}</h3>
+
         <h4><b>🆔 ID Evento:</b></h4>
-        <p>${doc.id}</p>
+        <p>${eventId}</p>
+
         <h4><b>📍 Luogo:</b></h4>
         <p>${e.location || "Non specificato."}</p>
 
@@ -58,16 +71,15 @@ async function loadPublicEvents() {
 
         <h4><b>😁 Promulgato da:</b></h4>
         <p>${e.userId || "Friuli Emergenze"}</p>
-      `;
+    `;
 
-      eventsList.appendChild(div);
-    });
+    eventsList.appendChild(div);
 
   } catch (err) {
     console.error(err);
-    statusMsg.textContent = "❌ Errore nel caricamento degli eventi.";
+    statusMsg.textContent = "❌ Errore nel caricamento dell'evento.";
   }
 }
 
 // Avvio caricamento
-loadPublicEvents();
+loadPublicEvent();
