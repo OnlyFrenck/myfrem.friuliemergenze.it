@@ -21,6 +21,12 @@ const db = getFirestore(app);
 // FORM
 const form = document.getElementById("eventForm");
 const statusMsg = document.getElementById("statusMsg");
+const logoutBtn = document.getElementById("logoutBtn");
+
+logoutBtn.onclick = async () => {
+  await signOut(auth);
+  window.location.href = "/login";
+};
 
 let currentUser = null;
 

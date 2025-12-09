@@ -26,6 +26,12 @@ document.getElementById("logoutBtn").onclick = async () => {
 // DOM
 const eventsList = document.getElementById("eventsList");
 const statusMsg = document.getElementById("statusMsg");
+const logoutBtn = document.getElementById("logoutBtn");
+
+logoutBtn.onclick = async () => {
+  await signOut(auth);
+  window.location.href = "/login";
+};
 
 // Carica eventi dell’utente loggato
 onAuthStateChanged(auth, async (user) => {

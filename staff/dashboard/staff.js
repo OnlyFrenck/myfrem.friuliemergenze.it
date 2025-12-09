@@ -22,6 +22,11 @@ const totalUsersEl = document.getElementById("totalUsers");
 const pendingPhotosEl = document.getElementById("pendingPhotos");
 const approvedPhotosEl = document.getElementById("approvedPhotos");
 const rejectedPhotosEl = document.getElementById("rejectedPhotos");
+const totalEventsEl = document.getElementById("totalEvents");
+const pendingEventsEl = document.getElementById("pendingEvents");
+const approvedEventsEl = document.getElementById("approvedEvents");
+const rejectedEventsEl = document.getElementById("rejectedEvents");
+const organizedEventsEl = document.getElementById("organizedEvents");
 const logoutBtn = document.getElementById("logoutBtn");
 
 // 🚪 Logout
@@ -76,6 +81,35 @@ async function loadStats() {
       query(collection(db, "photos"), where("status", "==", "Rifiutata ❌"))
     );
     rejectedPhotosEl.textContent = rejectedSnap.size;
+
+    // 🔹 Eventi 
+    const eventsSnap = await getDocs(collection(db, "events"));
+    totalEventsEl.textContent = eventsSnap.size;
+
+    // 🔹 Eventi pending
+    const eventsPendingSnap = await getDocs(
+      query(collection(db, "events"), where("status", "==", "In revisione..."))
+    );
+    pendingEventsEl.textContent = eventsPendingSnap.size;
+
+    // 🔹 Eventi approvati
+    const eventsApprovedSnap = await getDocs(
+      query(collection(db, "events"), where("status", "==", "Approvato"))
+    );
+    approvedEventsEl.textContent = eventsApprovedSnap.size;
+
+    // 🔹 Eventi rifiutati
+    const eventsRejectedSnap = await getDocs(
+      query(collection(db, "events"), where("status", "==", "Rifiutato"))
+    );
+    rejectedEventsEl.textContent = eventsRejectedSnap.size;
+
+    // 🔹 Eventi organizzati
+    const eventsOrganizedSnap = await getDocs(
+      query(collection(db, "events"), where("status", "==", "Organizzato"))
+    );
+
+    organizedEventsEl.textContent = eventsOrganizedSnap.size;
 
   } catch (err) {
     console.error("❌ Errore caricamento statistiche:", err);
