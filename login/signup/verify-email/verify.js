@@ -1,14 +1,11 @@
-firebase.initializeApp({
-  apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
-  authDomain: "friuli-emergenze.firebaseapp.com",
-  projectId: "friuli-emergenze",
-  storageBucket: "friuli-emergenze.firebasestorage.app",
-  messagingSenderId: "362899702838",
-  appId: "1:362899702838:web:da96f62189ef1fa2010497",
-  measurementId: "G-THNJG888RE"
-});
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { firebaseConfig } from "../../../configFirebase.js";
 
-const auth = firebase.auth();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 const resendBtn = document.getElementById("resendBtn");
 const statusMsg = document.getElementById("statusMsg");

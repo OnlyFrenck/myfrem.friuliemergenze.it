@@ -112,6 +112,13 @@ uploadBtn.addEventListener("click", (e) => {
 
       console.log("🔥 Salvataggio Firestore in corso...");
 
+      await addDoc(collection(db, "activities"), {
+        userName: currentUser.name,
+        photoTitle: titleInput.value || "-",
+        timestamp: serverTimestamp(),
+        type: "photo_submission",
+      });
+
       const docRef = await addDoc(collection(db, "photos"), {
         userId: currentUser.uid,
         title: titleInput.value || "",

@@ -89,6 +89,17 @@ header p {
   background-color: #005bb5;
 }
 
+.btn-close_window {
+  text-decoration: none;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: #e67e22;
+  color: #fff;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
 /* Messaggi status */
 #statusMsg {
   text-align: center;

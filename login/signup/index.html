@@ -50,6 +50,19 @@
     <p id="messageBox"></p>
   </div>
 
-  <script src="/login/app.js"></script>
+  <script type="module" src="/login/app.js"></script>
+  <script>
+    function togglePassword(inputId, button) {
+      const input = document.getElementById(inputId);
+
+      if (input.type === "password") {
+        input.type = "text";
+        button.textContent = "🚫";
+      } else {
+        input.type = "password";
+        button.textContent = "👁";
+      }
+    }
+  </script>
 </body>
 </html>

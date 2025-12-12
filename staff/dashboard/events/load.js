@@ -1,16 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, updateDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-
-// 🔥 Config Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
-  authDomain: "friuli-emergenze.firebaseapp.com",
-  projectId: "friuli-emergenze",
-  storageBucket: "friuli-emergenze.firebasestorage.app",
-  messagingSenderId: "362899702838",
-  appId: "1:362899702838:web:da96f62189ef1fa2010497"
-};
+import { getFirestore, collection, getDocs, updateDoc, addDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { firebaseConfig } from "../../../configFirebase.js.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -82,18 +73,36 @@ onAuthStateChanged(auth, async (user) => {
 
       // Eventi pulsanti
         div.querySelector(".btn-organized").onclick = async () => {
-          await updateDoc(doc(db, "events", docSnap.id), { status: "Organizzato" })
+          await addDoc(doc(collection(db, "activities"), {
+            organizationStaffer: auth.currentUser.email || "-",
+            eventTitle: e.title,
+            timestamp: new Date(),
+            type: "event_organized",
+          }));
+          await updateDoc(doc(db, "events", docSnap.id), { status: "Organizzato" });
           div.querySelector(".status").textContent = "Organizzato";
           div.querySelector(".status").className = "status organized";
         };
 
       div.querySelector(".btn-approve").onclick = async () => {
+        await addDoc(doc(collection(db, "activities"), {
+          approvalStaffer: auth.currentUser.email || "-",
+          eventTitle: e.title,
+          timestamp: new Date(),
+          type: "event_approval",
+        }));
         await updateDoc(doc(db, "events", docSnap.id), { status: "Approvato" });
         div.querySelector(".status").textContent = "Approvato";
         div.querySelector(".status").className = "status approved";
       };
 
       div.querySelector(".btn-reject").onclick = async () => {
+        await addDoc(doc(collection(db, "activities"), {
+          rejectionStaffer: auth.currentUser.email || "-",
+          eventTitle: e.title,
+          timestamp: new Date(),
+          type: "event_rejection",
+        }));
         await updateDoc(doc(db, "events", docSnap.id), { status: "Rifiutato" });
         div.querySelector(".status").textContent = "Rifiutato";
         div.querySelector(".status").className = "status rejected";

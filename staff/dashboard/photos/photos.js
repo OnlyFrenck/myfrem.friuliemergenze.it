@@ -12,16 +12,7 @@ import {
   serverTimestamp,
   addDoc
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
-  authDomain: "friuli-emergenze.firebaseapp.com",
-  projectId: "friuli-emergenze",
-  storageBucket: "friuli-emergenze.firebasestorage.app",
-  messagingSenderId: "362899702838",
-  appId: "1:362899702838:web:da96f62189ef1fa2010497",
-  measurementId: "G-THNJG888RE"
-};
+import { firebaseConfig } from "../../../configFirebase.js"
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -116,12 +107,24 @@ async function loadPendingPhotos() {
     });
 
     document.querySelectorAll(".approve").forEach(btn => {
+      addDoc(collection(db, "activities"), {
+        type: "photo_approval",
+        approvalStaffer: auth.currentUser.email || "-",
+        photoTitle: photo.title || "-",
+        timestamp: serverTimestamp()
+      });
       btn.addEventListener("click", () => {
         updatePhotoStatus(btn.dataset.id, "Approvata ✅");
       });
     });
 
     document.querySelectorAll(".reject").forEach(btn => {
+      addDoc(collection(db, "activities"), {
+        type: "photo_rejection",
+        rejectionStaffer: auth.currentUser.email || "-",
+        photoTitle: photo.title || "-",
+        timestamp: serverTimestamp()
+      });
       btn.addEventListener("click", () => {
         updatePhotoStatus(btn.dataset.id, "Rifiutata ❌");
       });
@@ -143,17 +146,6 @@ async function updatePhotoStatus(photoId, status) {
       status: status,
       reviewedAt: serverTimestamp()
     });
-
-    const user = auth.currentUser;
-    if (user) {
-      await addDoc(collection(db, "staff_logs"), {
-        staffId: user.uid,
-        staffEmail: user.email || "-",
-        action: status.includes("Approvata") ? "approve_photo" : "reject_photo",
-        photoId: photoId,
-        timestamp: serverTimestamp()
-      });
-    }
 
     setStatus(`✅ Foto ${status}`);
     loadPendingPhotos();

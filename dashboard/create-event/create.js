@@ -2,17 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, serverTimestamp, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-
-// CONFIG
-const firebaseConfig = {
-  apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
-  authDomain: "friuli-emergenze.firebaseapp.com",
-  projectId: "friuli-emergenze",
-  storageBucket: "friuli-emergenze.firebasestorage.app",
-  messagingSenderId: "362899702838",
-  appId: "1:362899702838:web:da96f62189ef1fa2010497",
-  measurementId: "G-THNJG888RE"
-};
+import { firebaseConfig } from "../../configFirebase.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -56,6 +46,13 @@ form.addEventListener("submit", async (e) => {
   statusMsg.style.color = "#ccc";
 
   try {
+    await addDoc(collection(db, "activities"), {
+      userName: userDoc.data().name,
+      eventTitle: title,
+      timestamp: serverTimestamp(),
+      type: "event_creation",
+    });
+
     await addDoc(collection(db, "events"), {
       title,
       description,

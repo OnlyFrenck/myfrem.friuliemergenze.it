@@ -12,15 +12,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
-  authDomain: "friuli-emergenze.firebaseapp.com",
-  projectId: "friuli-emergenze",
-  storageBucket: "friuli-emergenze.firebasestorage.app",
-  messagingSenderId: "362899702838",
-  appId: "1:362899702838:web:da96f62189ef1fa2010497",
-  measurementId: "G-THNJG888RE"
-};
+import { firebaseConfig } from "../../../../configFirebase.js.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -171,6 +163,12 @@ window.saveVehicleLink = async (photoId) => {
   }
 
   try {
+    await addDoc(doc(db, "activities"), {
+      type: "photo_edit",
+      editStaffer: auth.currentUser.email || "-",
+      photoTitle: photo.title || "-",
+      timestamp: serverTimestamp()
+    });
     await updateDoc(doc(db, "photos", photoId), {
       vehicleLink: link
     });

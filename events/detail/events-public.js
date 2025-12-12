@@ -71,6 +71,8 @@ async function loadPublicEvent() {
 
         <h4><b>😁 Promulgato da:</b></h4>
         <p>${e.userId || "Friuli Emergenze"}</p>
+
+        <button onclick="window.close()" class="btn-close_window">❌ Chiudi finestra</button>
     `;
 
     eventsList.appendChild(div);

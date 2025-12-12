@@ -21,10 +21,22 @@
 
     <p id="statusMsg"></p>
 
-    <a href="/login/">← Torna al login</a>
+    <a href="/login/" onclick="emailVerified()">← Torna al login</a>
   </div>
 
   <p id="messageBox"></p>
   <script src="./verify.js"></script>
+  <script>
+    async function emailVerified() {
+      const userSnap = getDoc(doc(db, "users", auth.currentUser.uid));
+      if (!userSnap.exists()) {
+        statusMsg.textContent = "❌ Utente non trovato nel database.";
+        return;
+      }
+
+      // Aggiorna stato email verificata
+      await userSnap.ref.update({ emailVerified: true });
+    }
+  </script>
 </body>
 </html>

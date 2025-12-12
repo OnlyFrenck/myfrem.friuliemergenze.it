@@ -1,13 +1,4 @@
-// --- Config Firebase ---
-const firebaseConfig = {
-  apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
-  authDomain: "friuli-emergenze.firebaseapp.com",
-  projectId: "friuli-emergenze",
-  storageBucket: "friuli-emergenze.firebasestorage.app",
-  messagingSenderId: "362899702838",
-  appId: "1:362899702838:web:da96f62189ef1fa2010497",
-  measurementId: "G-THNJG888RE"
-};
+import { firebaseConfig } from "../configFirebase.js";
 
 // --- Init Firebase ---
 firebase.initializeApp(firebaseConfig);
@@ -23,17 +14,17 @@ const approvedPhotosEl = document.getElementById("approvedPhotos");
 const pendingPhotosEl = document.getElementById("pendingPhotos");
 const rejectedPhotosEl = document.getElementById("rejectedPhotos");
 const activityListEl = document.getElementById("activityList");
+const totalEventsEl = document.getElementById("totalEvents");
+const approvedEventsEl = document.getElementById("approvedEvents");
+const pendingEventsEl = document.getElementById("pendingEvents");
+const rejectedEventsEl = document.getElementById("rejectedEvents");
+const organizedEventsEl = document.getElementById("organizedEvents");
 
 // --- Controllo autenticazione ---
 auth.onAuthStateChanged(async (user) => {
   console.log("👀 onAuthStateChanged triggered, user:", user);
 
-  if (user.role === "staff") {
-    alert("Accesso negato: solo utenti normali possono accedere a questa pagina. Utilizza il tuo account personale.");
-    window.location.href = "/staff/dashboard/";
-    return;
-  }
-
+  // PRIMA cosa: controlla se user esiste
   if (!user) {
     console.warn("⚠️ Nessun utente loggato, redirect al login...");
     window.location.href = "/login/";
@@ -41,17 +32,25 @@ auth.onAuthStateChanged(async (user) => {
   }
 
   try {
-    // 📂 Recupera dati profilo
+    // Recupera dati Firestore dell’utente
     const userDoc = await db.collection("users").doc(user.uid).get();
-    if (userDoc.exists) {
-      const userData = userDoc.data();
-      console.log("✅ Dati utente trovati:", userData);
-      userNameEl.textContent = userData.name + ` (${userData.username})` || "Utente";
-    } else {
-      console.warn("⚠️ Nessun documento utente trovato in Firestore!");
+    const userData = userDoc.exists ? userDoc.data() : null;
+
+    // Verifica ruolo SOLO se userData esiste
+    if (userData?.role === "staff") {
+      alert("Accesso negato: solo utenti normali possono accedere a questa pagina. Utilizza il tuo account personale.");
+      window.location.href = "/staff/dashboard/";
+      return;
     }
 
-    // 📸 Recupera ultime foto
+    // Mostra nome utente
+    if (userData) {
+      userNameEl.textContent = `${userData.name} (${userData.username})`;
+    } else {
+      userNameEl.textContent = "Utente";
+    }
+
+    // --- FOTO ---
     const photosSnap = await db.collection("photos")
       .where("userId", "==", user.uid)
       .orderBy("createdAt", "desc")
@@ -64,12 +63,17 @@ auth.onAuthStateChanged(async (user) => {
     photosSnap.forEach(doc => {
       const photo = doc.data();
       total++;
+
       if (photo.status === "Approvata ✅") approved++;
       if (photo.status === "Foto in attesa di approvazione ⌛") pending++;
       if (photo.status === "Rifiutata ❌") rejected++;
 
       const li = document.createElement("li");
-      li.innerHTML = `<p>📸 Foto caricata il ${photo.createdAt?.toDate().toLocaleString()} - Stato: <b>${photo.status}</b></p>`;
+      li.innerHTML = `
+        <p>📸 Foto caricata il ${
+          photo.createdAt?.toDate().toLocaleString() || "data sconosciuta"
+        } - Stato: <b>${photo.status}</b></p>
+      `;
       activityListEl.appendChild(li);
     });
 
@@ -81,8 +85,42 @@ auth.onAuthStateChanged(async (user) => {
     if (total === 0) {
       activityListEl.innerHTML = "<li>Nessuna attività recente.</li>";
     }
+
   } catch (err) {
-    console.error("❌ Errore durante il recupero dati Firestore:", err);
+    console.error("[FOTO] ❌ Errore durante il recupero dati Firestore:", err);
+  }
+
+  // --- EVENTI ---
+  try {
+    const userDoc = await db.collection("users").doc(user.uid).get();
+    const userData = userDoc.exists ? userDoc.data() : null;
+
+    const eventsSnap = await db.collection("events")
+      .where("userId", "==", userData.name + " " + userData.surname)
+      .orderBy("createdAt", "desc")
+      .limit(5)
+      .get();
+
+    let totalE = 0, approvedE = 0, pendingE = 0, rejectedE = 0, organizedE = 0;
+
+    eventsSnap.forEach(doc => {
+      const event = doc.data();
+      totalE++;
+
+      if (event.status === "Approvato") approvedE++;
+      if (event.status === "In revisione...") pendingE++;
+      if (event.status === "Rifiutato") rejectedE++;
+      if (event.status === "Organizzato") organizedE++;
+    });
+
+    totalEventsEl.textContent = totalE;
+    approvedEventsEl.textContent = approvedE;
+    pendingEventsEl.textContent = pendingE;
+    rejectedEventsEl.textContent = rejectedE;
+    organizedEventsEl.textContent = organizedE;
+
+  } catch (err) {
+    console.error("[EVENTI] ❌ Errore durante il recupero dati Firestore:", err);
   }
 });
 

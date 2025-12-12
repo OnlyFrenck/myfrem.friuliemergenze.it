@@ -1,17 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-
-// 🔥 Config Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyBXD0zGs_kzfWYugVIj8rrZX91YlwBjOJU",
-  authDomain: "friuli-emergenze.firebaseapp.com",
-  projectId: "friuli-emergenze",
-  storageBucket: "friuli-emergenze.firebasestorage.app",
-  messagingSenderId: "362899702838",
-  appId: "1:362899702838:web:da96f62189ef1fa2010497",
-  measurementId: "G-THNJG888RE"
-};
+import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { firebaseConfig } from "../../../configFirebase.js"
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -70,7 +60,7 @@ async function loadUsers() {
       <td>${u.surname || ""}</td>
       <td>${u.email || ""}</td>
       <td>${u.username || ""}</td>
-      <td>${u.role || "Stato utente non disponibile."}</td>
+      <td>${u.role || "Ruolo utente non disponibile."}</td>
       <td>${u.status || "Status utente non disponibile."}</td>
       <td>
         <button class="promote">Promuovi</button>
@@ -90,6 +80,13 @@ async function loadUsers() {
 
 async function updateRole(userId, currentRole) {
   const newRole = currentRole === "staff" ? "user" : "staff";
+  await addDoc(doc(db, "activities"), {
+    type: "user_role_change",
+    userName: auth.currentUser.name,
+    newRole: newRole,
+    changeStaffer: auth.currentUser.email,
+    timestamp: new Date()
+  })
   await updateDoc(doc(db, "users", userId), { role: newRole });
   loadUsers();
 }
@@ -102,6 +99,11 @@ async function updateStatus(userId, currentStatus) {
 
 async function deleteUser(userId) {
   if (confirm("Sei sicuro di voler eliminare questo utente?")) {
+    await addDoc(collection(db, "activities"), {
+      type: "user_deletion",
+      userName: userId,
+      timestamp: new Date()
+    });
     await updateDoc(doc(db, "users", userId), { status: "eliminato" });
     loadUsers();
     setTimeout(async () => {
