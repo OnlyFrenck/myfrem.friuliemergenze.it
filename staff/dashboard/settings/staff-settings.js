@@ -18,8 +18,13 @@ const staffRole = document.getElementById("staffRole");
 const changePasswordForm = document.getElementById("changePasswordForm");
 const passwordStatusMsg = document.getElementById("passwordStatusMsg");
 
+const changeUsernameForm = document.getElementById("changeUsernameForm");
+const usernameText = document.getElementById("usernameText");
+const newUsernameInput = document.getElementById("newUsername");
+
 const bioInput = document.getElementById("bioInput")
 const bioText = document.getElementById("bioText")
+const saveBioBtn = document.getElementById("saveBioBtn");
 
 const preferencesForm = document.getElementById("preferencesForm");
 const preferencesStatusMsg = document.getElementById("preferencesStatusMsg");
@@ -52,6 +57,7 @@ auth.onAuthStateChanged(async user => {
   staffName.textContent = data.name + " " + data.surname || "Non disponibile.";
   staffEmail.innerHTML = `<a href="mailto:${data.email}">${data.email}</a>` || "Non disponibile.";
   staffRole.textContent = data.role || "Non disponibile.";
+  usernameText.textContent = data.username || "Non disponibile.";
   bioText.textContent = data.bio || "Non disponibile."
 
   // Carica preferenze da localStorage
@@ -100,6 +106,21 @@ changePasswordForm.addEventListener("submit", async (e) => {
   }
 });
 
+// ==================== CAMBIO USERNAME ====================
+changeUsernameForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const newUsername = newUsernameInput.value.trim();
+  if (newUsername.length < 3) {
+    alert("Lo username deve essere di almeno 3 caratteri!");
+    return;
+  }
+  await updateDoc(doc(db, "users", currentUserId), {
+    username: newUsername
+  });
+  usernameText.textContent = newUsername;
+  alert("Username aggiornato!");
+});
+
 // ==================== BIO ====================
 saveBioBtn.addEventListener("click", async () => {
   const newBio = bioInput.value.trim();
@@ -116,7 +137,6 @@ preferencesForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
   localStorage.setItem("staff_emailNotifications", emailNotificationsCheckbox.checked);
-  localStorage.setItem("staff_darkMode", darkModeToggle.checked);
 
   // Applica tema scuro
   if(darkModeToggle.checked) document.body.classList.add("dark-mode");

@@ -12,7 +12,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-import { firebaseConfig } from "../../../../configFirebase.js.js";
+import { firebaseConfig } from "../../../../configFirebase.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -110,6 +110,7 @@ async function loadAllPhotos() {
               href="${hasLink ? photo.vehicleLink : "#"}"
               target="_blank"
               id="link-view-${id}"
+              style="text-decoration: underline; font-size: 1em;"
               class="photo-link-static ${hasLink ? "" : "hidden"}"
             >
               ${hasLink ? photo.vehicleLink : ""}

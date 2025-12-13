@@ -68,9 +68,19 @@
         <label>Conferma nuova password</label>
         <input type="password" id="confirmPassword" required>
 
-        <button type="submit">💾 Cambia password</button>
+        <button type="submit" id="savePasswordBtn">💾 Cambia password</button>
       </form>
       <p id="passwordStatusMsg"></p>
+    </section>
+
+    <section class="settings-section">
+      <h2>👤 Cambia Username</h2>
+      <p>Il tuo username attuale è: <b id="usernameText"></b></p>
+      <form id="changeUsernameForm" style="margin-top: 15px;">
+        <label>Nuovo username</label>
+        <input type="text" id="newUsername" required>
+
+        <button type="submit" id="saveUsernameBtn">💾 Cambia username</button>
     </section>
 
     <section class="settings-section">
@@ -80,36 +90,12 @@
       <button id="saveBioBtn" class="btn" type="submit">💾 Salva bio</button>
     </section>
 
-    <!-- ===== SICUREZZA AVANZATA ===== -->
-    <section class="settings-section">
-      <h2>🛡️ Sicurezza Avanzata</h2>
-
-      <div class="security-item">
-        <h3>Autenticazione a due fattori (2FA)</h3>
-        <p>Proteggi il tuo account usando il telefono.</p>
-        <input type="text" id="phoneNumber" class="disabled" placeholder="+39 3xx xxx xxxx" disabled>
-        <button id="sendCodeBtn" class="disabled" disabled>In arrivo</button>
-        <button id="sendCodeBtn" style="display:none;">📩 Invia codice</button>
-
-        <div id="verificationSection" style="display:none; margin-top:10px;">
-          <input type="text" id="verificationCode" placeholder="Inserisci codice ricevuto">
-          <button id="verifyCodeBtn">✅ Verifica codice</button>
-        </div>
-
-        <p id="twoFaStatusMsg"></p>
-      </div>
-    </section>
-
     <!-- ===== PREFERENZE STAFF ===== -->
     <section class="settings-section">
       <h2>⚙️ Preferenze Staff</h2>
       <form id="preferencesForm">
         <label class="checkbox">
           <input type="checkbox" id="emailNotifications"> Notifiche via email
-        </label>
-
-        <label class="checkbox">
-          <input type="checkbox" id="darkModeToggle"> Tema scuro
         </label>
 
         <button type="submit">💾 Salva preferenze</button>
