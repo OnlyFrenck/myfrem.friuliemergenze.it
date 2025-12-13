@@ -146,6 +146,8 @@ async function loadStats() {
           li.textContent = `[${date}] Nuovo utente registrato: "${activity.userName}"`;
         } else if (activity.type === "kick_add") {
           li.textContent = `[${date}] Nuovo report di espulsione aggiunto da "${activity.addStaffer}": "${activity.kickedMember}"`;
+        } else if (activity.type === "eventRegistration") {
+          li.textContent = `[${date}] ${activity.nameJoiner} si è iscritto all'evento "${activity.eventTitle}" (ID: ${activity.eventId}).`;
         } else {
           li.textContent = `[${date}] Attività sconosciuta.`;
         };

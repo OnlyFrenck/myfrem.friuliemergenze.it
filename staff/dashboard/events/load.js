@@ -74,44 +74,46 @@ onAuthStateChanged(auth, async (user) => {
 
       // Eventi pulsanti
         div.querySelector(".btn-organized").onclick = async () => {
-          await addDoc(doc(collection(db, "activities"), {
+          await addDoc(collection(db, "activities"), {
             organizationStaffer: auth.currentUser.email || "-",
             eventTitle: e.title,
             timestamp: new Date(),
             type: "event_organized",
-          }));
-          await updateDoc(doc(db, "events", docSnap.id), { status: "Organizzato" });
+          });
+          const userRef = doc(db, "events", docSnap.id);
+          await updateDoc(userRef, { status: "Organizzato" });
           div.querySelector(".status").textContent = "Organizzato";
           div.querySelector(".status").className = "status organized";
         };
 
-      div.querySelector(".btn-approve").onclick = async () => {
-        await addDoc(doc(collection(db, "activities"), {
-          approvalStaffer: auth.currentUser.email || "-",
-          eventTitle: e.title,
-          timestamp: new Date(),
-          type: "event_approval",
-        }));
-        await updateDoc(doc(db, "events", docSnap.id), { status: "Approvato" });
-        div.querySelector(".status").textContent = "Approvato";
-        div.querySelector(".status").className = "status approved";
-      };
+        div.querySelector(".btn-approve").onclick = async () => {
+          await addDoc(collection(db, "activities"), {
+            approvalStaffer: auth.currentUser.email || "-",
+            eventTitle: e.title,
+            timestamp: new Date(),
+            type: "event_approval",
+          });
+          const userRef = doc(db, "events", docSnap.id);
+          await updateDoc(userRef, { status: "Organizzato" });
+          div.querySelector(".status").textContent = "Approvato";
+          div.querySelector(".status").className = "status approved";
+        };
 
-      div.querySelector(".btn-reject").onclick = async () => {
-        await addDoc(doc(collection(db, "activities"), {
-          rejectionStaffer: auth.currentUser.email || "-",
-          eventTitle: e.title,
-          timestamp: new Date(),
-          type: "event_rejection",
-        }));
-        await updateDoc(doc(db, "events", docSnap.id), { status: "Rifiutato" });
-        div.querySelector(".status").textContent = "Rifiutato";
-        div.querySelector(".status").className = "status rejected";
-      };
+        div.querySelector(".btn-reject").onclick = async () => {
+          await addDoc(collection(db, "activities"), {
+            rejectionStaffer: auth.currentUser.email || "-",
+            eventTitle: e.title,
+            timestamp: new Date(),
+            type: "event_rejection",
+          });
+          const userRef = doc(db, "events", docSnap.id);
+          await updateDoc(userRef, { status: "Organizzato" });
+          div.querySelector(".status").textContent = "Rifiutato";
+          div.querySelector(".status").className = "status rejected";
+        };
 
-      eventsList.appendChild(div);
-    });
-
+        eventsList.appendChild(div);
+      });
   } catch (err) {
     console.error(err);
     statusMsg.textContent = "❌ Errore nel caricamento degli eventi.";

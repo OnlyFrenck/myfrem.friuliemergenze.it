@@ -13,6 +13,7 @@ const totalPhotosEl = document.getElementById("totalPhotos");
 const approvedPhotosEl = document.getElementById("approvedPhotos");
 const pendingPhotosEl = document.getElementById("pendingPhotos");
 const rejectedPhotosEl = document.getElementById("rejectedPhotos");
+const eventsListEl = document.getElementById("eventsList");
 const activityListEl = document.getElementById("activityList");
 const totalEventsEl = document.getElementById("totalEvents");
 const approvedEventsEl = document.getElementById("approvedEvents");
@@ -85,6 +86,28 @@ auth.onAuthStateChanged(async (user) => {
     if (total === 0) {
       activityListEl.innerHTML = "<li>Nessuna attività recente.</li>";
     }
+
+    // --- EVENTI ---
+    eventsListEl.innerHTML = "";
+    const eventsSnap = await db.collection("events")
+      .orderBy("createdAt", "desc")
+      .limit(5)
+      .get();
+    
+    eventsSnap.forEach(doc => {
+      const event = doc.data();
+      if (event.status === "Organizzato") {
+        eventsListEl.innerHTML += `
+          <h2>📅 Eventi </h2>
+          <div class="event-card">
+            <h3>${event.title}</h3>
+            <p>Data e ora: ${event.date || "Data e/o ora sconosciute"}  ${event.time || ""}</p>
+            <p>Luogo: ${event.location || "Luogo sconosciuto"}</p>
+            <a href="/events/join/?event=${doc.id}" class="btn" target="_blank">Iscriviti</a>
+          </div>
+        `;
+      }
+    });
 
   } catch (err) {
     console.error("[FOTO] ❌ Errore durante il recupero dati Firestore:", err);
