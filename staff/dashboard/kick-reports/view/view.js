@@ -52,7 +52,7 @@ async function loadReport(id) {
     <p>${data.userNumber || "—"}</p>
 
     <h3>Staff che ha segnalato:</h3>
-    <p>${data.staffName || auth.currentUser.email}</p>
+    <p><a href="mailto:${data.staffMail}">${data.staffMail}</a></p>
 
     <h3>Motivo:</h3>
     <p>${data.reason || "—"}</p>

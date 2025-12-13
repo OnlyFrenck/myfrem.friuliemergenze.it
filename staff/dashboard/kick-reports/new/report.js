@@ -47,6 +47,7 @@ expulsionForm.addEventListener("submit", async (e) => {
     await addDoc(collection(db, "expulsionReports"), {
       userName,
       userNumber,
+      staffMail: auth.currentUser.email,
       reason,
       expulsionDate,
       notes,
